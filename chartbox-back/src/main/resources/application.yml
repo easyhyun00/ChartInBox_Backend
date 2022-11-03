@@ -1,0 +1,9 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: chartinbox1234@gmail.com
+    password: nygltxapwoedhhwr
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
