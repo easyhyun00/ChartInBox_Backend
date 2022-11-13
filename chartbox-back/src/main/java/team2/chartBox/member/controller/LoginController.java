@@ -69,7 +69,7 @@ public class LoginController {
     /*
         비밀번호 찾기 메일인증
      */
-    @PostMapping("/find-pw")
+    @PostMapping("/log-in/find-pw")
     public ResponseEntity findPassword(@RequestBody UserEmailResponse userEmailResponse) throws MessagingException, UnsupportedEncodingException {
 
         String sendEmail = userEmailResponse.getUserEmail();
