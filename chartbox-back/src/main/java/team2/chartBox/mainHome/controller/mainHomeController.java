@@ -2,31 +2,37 @@ package team2.chartBox.mainHome.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import team2.chartBox.SessionConst;
-import team2.chartBox.member.dto.LoginResponse;
-import team2.chartBox.member.entity.Member;
+import team2.chartBox.mainHome.dto.MainHomeDto;
+import team2.chartBox.mainHome.service.MainHomeService;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 @RestController
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
 @AllArgsConstructor
-public class mainHomeController {
+public class MainHomeController {
+
+    @Autowired
+    private MainHomeService mainHomeService;
 
     @GetMapping("/")
-    public String home(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false)Member member) {
-        if (member == null) {
-            return null;
-        }
-        return member.getUserNickname();
+    public ResponseEntity<MainHomeDto> home() throws IOException {
+        MainHomeDto mainHomeDto = new MainHomeDto();
+        mainHomeDto.setMvCharts(mainHomeService.getMvChartList());
 
-    }
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-    @GetMapping("/user")
-    public String user() {
-        return "user";
+        return new ResponseEntity<>(mainHomeDto,headers, HttpStatus.OK);
     }
 }

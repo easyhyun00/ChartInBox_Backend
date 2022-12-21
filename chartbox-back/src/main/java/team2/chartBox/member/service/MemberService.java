@@ -39,6 +39,10 @@ public class MemberService {
             return "userNickname"; // 존재하는 닉네임 = 회원 가입 불가능
         }
 
+        log.info(joinResponse.getUserEmail());
+        log.info(joinResponse.getUserNickname());
+        log.info(joinResponse.getUserPassword());
+
         // 비밀번호 암호화
         String encPassword = bCryptPasswordEncoder.encode(joinResponse.getUserPassword());
         joinResponse.setUserPassword(encPassword);
@@ -46,6 +50,10 @@ public class MemberService {
         log.info("encPassword = {}", encPassword);
 
         Member saveMember = new Member(joinResponse);
+
+        // 인증 번호 난수 생성
+        String authKey = getAuthCode(6);
+        saveMember.setAuthKey(authKey);
 
         // DB 저장
         memberRepository.save(saveMember);
@@ -152,13 +160,6 @@ public class MemberService {
     }
 
     /*
-        인증키 생성
-     */
-    private String getKey(int size) {
-        return getAuthCode(size);
-    }
-
-    /*
         인증코드 난수 발생
     */
     private String getAuthCode(int size) {
@@ -177,8 +178,10 @@ public class MemberService {
         회원가입 인증메일 보내기
      */
     public void sendAuthMail(String userEmail) throws MessagingException, UnsupportedEncodingException {
-        // 6자리 난수 인증번호 생성
-        String authKey = getKey(6);
+
+        Member member = memberRepository.findByUserEmail(userEmail);
+
+        log.info("메일 보내기");
 
         // 인증메일 보내기
         MailUtils sendMail = new MailUtils(mailSender);
@@ -190,18 +193,14 @@ public class MemberService {
                 .append("<a href='http://localhost:8080/join/confirm?userEmail=")
                 .append(userEmail)
                 .append("&authKey=")
-                .append(authKey)
+                .append(member.getAuthKey())
                 .append("' target='_blenk'>이메일 인증 확인</a>")
                 .toString());
         sendMail.setFrom("chartinbox1234@gmail.com","차트인박스");
         sendMail.setTo(userEmail);
         sendMail.send();
 
-        Member member = memberRepository.findByUserEmail(userEmail);
-        member.setAuthKey(authKey);
-        memberRepository.save(member);
-
-        // return authKey;
+        log.info("메일 다 보냄");
     }
 
     /*

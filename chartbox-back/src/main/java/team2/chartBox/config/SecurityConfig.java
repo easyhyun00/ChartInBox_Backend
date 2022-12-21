@@ -21,9 +21,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.authorizeRequests()
-                .antMatchers("/user/**").authenticated() // 인증필요
-                .anyRequest().permitAll(); // 그 외 요청 모두 허용
+        // http.authorizeRequests()
+                // .antMatchers("/myPage/**").authenticated() // 인증필요
+                // .anyRequest().permitAll(); // 그 외 요청 모두 허용
                 //.and()
                 //.logout()// 로그아웃
                 //.logoutUrl("/logout")

@@ -7,10 +7,10 @@ import java.util.Date;
 @Data
 public class MovieResponseDto {
     private int display;
-    private Item[] items;
+     private Item[] items;
 
-    @Data
-    static class Item {
+     @Data
+     static class Item {
         public String title;
         public String link;
         public String image;

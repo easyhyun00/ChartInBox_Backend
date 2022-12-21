@@ -11,8 +11,13 @@ public class MovieApiController {
 
     private final MovieService movieService;
 
-    @GetMapping("/movie/search/{keyword}")
+    @GetMapping("/movie/search/{keyword}") // 네이버 영화
     public MovieResponseDto get(@PathVariable String keyword) {
         return movieService.findByKeyword(keyword);
+    }
+
+    @GetMapping("/test") // 영화 차트
+    public void test() throws Exception {
+        CgvTest.WeeklyBoxOfficeChart();
     }
 }

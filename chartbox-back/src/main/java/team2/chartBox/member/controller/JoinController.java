@@ -26,6 +26,12 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity joinSubmit(@RequestBody JoinResponse joinResponse) throws MessagingException, UnsupportedEncodingException {
 
+        log.info("회원가입 제출");
+
+        log.info(joinResponse.getUserEmail());
+        log.info(joinResponse.getUserNickname());
+        log.info(joinResponse.getUserPassword());
+
         String strMsg = memberService.joinService(joinResponse);
 
         if (strMsg.equals("success")) { // 회원가입 성공

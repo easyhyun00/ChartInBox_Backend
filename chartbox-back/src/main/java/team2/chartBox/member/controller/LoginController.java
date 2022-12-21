@@ -33,6 +33,9 @@ public class LoginController {
     @PostMapping("/log-in")
     public ResponseEntity loginSubmit(@RequestBody LoginResponse loginResponse, HttpServletRequest request) {
 
+        log.info(loginResponse.getUserEmail());
+        log.info(loginResponse.getUserPassword());
+
         Member findMember = memberRepository.findByUserEmail(loginResponse.getUserEmail());
 
         String strMsg = memberService.loginService(findMember, loginResponse);

@@ -9,7 +9,7 @@ import team2.chartBox.member.dto.LoginResponse;
 
 import javax.persistence.*;
 
-@Table(name = "membertest")
+@Table(name = "member")
 @Entity
 @Getter @Setter
 @AllArgsConstructor
