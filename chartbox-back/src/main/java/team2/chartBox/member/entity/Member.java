@@ -35,6 +35,9 @@ public class Member {
     @Column(name = "AUTHSTATUS")
     private Integer authStatus;
 
+    @Column(name="USERMOVIESCRAP")
+    private String userMovieScrap;
+
 
     // 생성자
     public Member() {

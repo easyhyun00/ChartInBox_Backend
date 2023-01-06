@@ -2,15 +2,22 @@ package team2.chartBox.myPage.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team2.chartBox.SessionConst;
+import team2.chartBox.freeBoard.entity.FreeBoard;
+import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.myPage.dto.*;
 import team2.chartBox.myPage.service.MyPageService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.nio.charset.Charset;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -19,24 +26,29 @@ public class MyPageController {
 
     @Autowired
     private MyPageService myPageService;
+    private FreeBoardRepository freeBoardRepository;
 
     /*
-        마이페이지 화면
-        우선 닉네임, 이메일
-        추후에 작성한 게시물, 댓글, 스크랩한 글, 스크랩한 영화
+        [마이페이지 화면]
+        우선 닉네임, 이메일, 작성한 게시물
+        추후에 댓글, 스크랩한 영화
      */
     @GetMapping("/my-page")
     public ResponseEntity<MyPageResponse> myPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
-        log.info("이메일 = {}" , member.getUserEmail());
-        log.info("닉네임 = {}", member.getUserNickname());
+        MyPageResponse myPageResponse = new MyPageResponse();
 
-        MyPageResponse myPageResponse = new MyPageResponse(member.getUserEmail(), member.getUserNickname());
+        myPageResponse.setUserEmail(member.getUserEmail());
+        myPageResponse.setUserNickname(member.getUserNickname());
+        myPageResponse.setFreeBoard(myPageService.getFreeBoardList(member.getUserNickname()));
 
-        return ResponseEntity.ok().body(myPageResponse);
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        return new ResponseEntity<>(myPageResponse,headers, HttpStatus.OK);
     }
 
     /*
-        정보 수정 화면
+        [정보 수정 화면]
         세션을 통해 닉네임 전송
      */
     @GetMapping("/my-page/edit")
@@ -73,8 +85,7 @@ public class MyPageController {
     }
 
     /*
-        회원 탈퇴
-
+        [회원 탈퇴]
         DB에 해당 사용자 제거, 세션 제거
      */
     @PostMapping("/my-page/edit/withdraw")
@@ -92,6 +103,15 @@ public class MyPageController {
             return ResponseEntity.ok().body(true); // 성공
 
         return ResponseEntity.badRequest().body(false);
+    }
+
+    /*
+        [내가 쓴 글 상세 보기]
+        그런데 생각해보니깐 자유게시판만이네,,
+     */
+    @GetMapping("my-page/free-board")
+    public List<FreeBoard> myPageMyFreeBoard(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+        return myPageService.getFreeBoardList(member.getUserNickname());
     }
 
 }

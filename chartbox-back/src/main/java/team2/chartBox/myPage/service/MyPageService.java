@@ -5,10 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import team2.chartBox.freeBoard.entity.FreeBoard;
+import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.member.repository.MemberRepository;
 import team2.chartBox.myPage.dto.EditNicknameResponse;
 import team2.chartBox.myPage.dto.EditPasswordResponse;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +22,7 @@ public class MyPageService {
     @Autowired
     private MemberRepository memberRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private FreeBoardRepository freeBoardRepository;
 
     /*
         닉네임 변경
@@ -62,5 +67,12 @@ public class MyPageService {
             return "fail";
         memberRepository.delete(findMember);
         return "success";
+    }
+
+    /*
+        회원이 작성한 글 목록
+     */
+    public List<FreeBoard> getFreeBoardList(String userNickname) {
+        return freeBoardRepository.findAllByPostUserNickname(userNickname);
     }
 }

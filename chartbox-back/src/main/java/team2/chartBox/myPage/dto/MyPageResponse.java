@@ -7,12 +7,8 @@ import lombok.Setter;
 public class MyPageResponse {
     private String userEmail;
     private String userNickname;
+    private Object freeBoard;
 
     public MyPageResponse() {
-    }
-
-    public MyPageResponse(String userEmail, String userNickname) {
-        this.userEmail = userEmail;
-        this.userNickname = userNickname;
     }
 }

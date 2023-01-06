@@ -50,7 +50,7 @@ public class MovieChartService {
             if ((findMvName != null)) {
                 findMvChart.setMovieId(findMvName.getMovieId());
             } else {
-                findMvChart.setMovieId(null);
+                findMvChart.setMovieId("");
             }
 
             System.out.println("=======>3");
@@ -86,7 +86,7 @@ public class MovieChartService {
             if ((findMvName != null)) {
                 findMvChart.setMovieId(findMvName.getMovieId());
             } else {
-                findMvChart.setMovieId(null);
+                findMvChart.setMovieId("");
             }
 
             movieChartRepository.save(findMvChart);
