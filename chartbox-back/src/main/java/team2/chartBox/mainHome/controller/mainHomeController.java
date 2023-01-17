@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team2.chartBox.mainHome.dto.MainHomeDto;
 import team2.chartBox.mainHome.service.MainHomeService;
+import team2.chartBox.schedul.service.MovieChartService;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,6 +25,7 @@ public class MainHomeController {
 
     @Autowired
     private MainHomeService mainHomeService;
+    private MovieChartService movieChartService;
 
     @GetMapping("/")
     public ResponseEntity<MainHomeDto> home() throws IOException {
@@ -32,6 +34,11 @@ public class MainHomeController {
 
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+
+        log.info("원래==> {}",mainHomeDto);
+
+
 
         return new ResponseEntity<>(mainHomeDto,headers, HttpStatus.OK);
     }

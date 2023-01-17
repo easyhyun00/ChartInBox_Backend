@@ -25,12 +25,12 @@ public class FreeBoardController {
     private FreeBoardService freeBoardService;
 
     /*
-        게시판 글 목록
+        무비 토크 - 전체 글 목록
      */
-    @GetMapping("/free-board")
-    public ResponseEntity<FreeBoardDto> FreeBoardTotalPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+    @GetMapping("/movie-talk")
+    public ResponseEntity<FreeBoardDto> MovieTalkTotalPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
         FreeBoardDto freeBoardDto = new FreeBoardDto();
-        freeBoardDto.setFreeBoardList(freeBoardService.getFreeBoardList());
+        freeBoardDto.setBoardList(freeBoardService.getMovieTalkList());
 
         if (member == null) {
             freeBoardDto.setUserNickname("비회원");
@@ -45,15 +45,76 @@ public class FreeBoardController {
     }
 
     /*
-        게시판 상세 보기
+        무비 토크 - 자유 게시판 글 목록
      */
-    @GetMapping("/free-board/{postId}")
+    @GetMapping("/movie-talk/free-board")
+    public ResponseEntity<FreeBoardDto> MovieTalkFreeBoardPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+        FreeBoardDto freeBoardDto = new FreeBoardDto();
+        freeBoardDto.setBoardList(freeBoardService.getFreeBoardList());
+
+        if (member == null) {
+            freeBoardDto.setUserNickname("비회원");
+        } else {
+            freeBoardDto.setUserNickname(member.getUserNickname());
+        }
+
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        return new ResponseEntity<>(freeBoardDto,headers, HttpStatus.OK);
+    }
+
+    /*
+        무비 토크 - 리뷰게시판 글 목록
+     */
+    @GetMapping("/movie-talk/review-board")
+    public ResponseEntity<FreeBoardDto> MovieTalkReviewBoardPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+        FreeBoardDto freeBoardDto = new FreeBoardDto();
+        freeBoardDto.setBoardList(freeBoardService.getReviewBoardList());
+
+        if (member == null) {
+            freeBoardDto.setUserNickname("비회원");
+        } else {
+            freeBoardDto.setUserNickname(member.getUserNickname());
+        }
+
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        return new ResponseEntity<>(freeBoardDto,headers, HttpStatus.OK);
+    }
+
+    /*
+       무비 토크 - Q&A 글 목록
+    */
+    @GetMapping("/movie-talk/qna-board")
+    public ResponseEntity<FreeBoardDto> MovieTalkQnaBoardPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+        FreeBoardDto freeBoardDto = new FreeBoardDto();
+        freeBoardDto.setBoardList(freeBoardService.getQnaBoardList());
+
+        if (member == null) {
+            freeBoardDto.setUserNickname("비회원");
+        } else {
+            freeBoardDto.setUserNickname(member.getUserNickname());
+        }
+
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        return new ResponseEntity<>(freeBoardDto,headers, HttpStatus.OK);
+    }
+
+    /*
+        무비 토크 - 게시물 상세 보기
+     */
+    @GetMapping("/movie-talk/{postId}")
     public ResponseEntity<FreeBoardDetailDto> FreeBoardDetailPage(@PathVariable String postId,
                                                                   @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
         FreeBoard freeBoardDetail = freeBoardService.getFreeBoardDetail(postId);
 
         FreeBoardDetailDto freeBoardDetailDto = new FreeBoardDetailDto();
-        freeBoardDetailDto.setFreeBoard(freeBoardDetail);
+        freeBoardDetailDto.setPostDetail(freeBoardDetail);
+        freeBoardDetailDto.setComments(freeBoardService.getCommentList(postId));
 
         if (member == null) {
             freeBoardDetailDto.setUserNickname("비회원");

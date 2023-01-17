@@ -37,6 +37,9 @@ dependencies {
 	// 스프링 배치
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	testImplementation 'org.springframework.batch:spring-batch-test'
+//	// 셀리니움 크롤링
+//	implementation 'org.seleniumhq.selenium:selenium-java:4.7.2'
+
 }
 
 tasks.named('test') {

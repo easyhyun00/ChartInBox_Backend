@@ -33,8 +33,9 @@ public class LoginController {
     @PostMapping("/log-in")
     public ResponseEntity loginSubmit(@RequestBody LoginResponse loginResponse, HttpServletRequest request) {
 
-        log.info(loginResponse.getUserEmail());
-        log.info(loginResponse.getUserPassword());
+        log.info("받은 거 {}",loginResponse);
+        log.info("===========> {} ",loginResponse.getUserEmail());
+        log.info("===========> {} ", loginResponse.getUserPassword());
 
         Member findMember = memberRepository.findByUserEmail(loginResponse.getUserEmail());
 
