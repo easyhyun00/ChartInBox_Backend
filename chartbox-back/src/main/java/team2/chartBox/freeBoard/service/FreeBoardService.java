@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team2.chartBox.freeBoard.dto.BoardWriteDto;
+import team2.chartBox.freeBoard.dto.CommentDto;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.entity.FreeBoardComment;
 import team2.chartBox.freeBoard.repository.FreeBoardCommentRepository;
@@ -62,13 +63,6 @@ public class FreeBoardService {
      */
     public List<FreeBoardComment> getCommentList(String postId) {
         return freeBoardCommentRepository.findAllByCmtPostId(Integer.parseInt(postId));
-    }
-
-    /*
-        댓글 개수
-     */
-    public Integer getCommentCnt(Integer postId) {
-        return getCommentList(String.valueOf(postId)).size();
     }
 
     /*
@@ -145,5 +139,105 @@ public class FreeBoardService {
             return "success"; // 성공
         }
         return "member"; // 잘못된 사용자
+    }
+
+    /*
+      댓글 - 작성
+   */
+    public String CommentAdd(String postId, CommentDto commentDto, Member member) {
+        if (postId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+        FreeBoard findBoard = getFreeBoardDetail(postId);
+        if (findBoard == null) {
+            return "board"; // 없는 게시물
+        }
+        if (member == null) {
+            return "non-member"; // 없는 회원(비회원)
+        }
+        if (commentDto.getCmtUserNickname().equals(member.getUserNickname())) {
+            FreeBoardComment freeBoardComment = new FreeBoardComment(commentDto,postId);
+            freeBoardCommentRepository.save(freeBoardComment);
+
+            findBoard.setPostComment(findBoard.getPostComment()+1);
+            freeBoardRepository.save(findBoard);
+
+            return "success";
+        }
+        return "member"; // 잘못된 사용자
+    }
+
+    /*
+        댓글 - 수정
+     */
+    public String CommentEdit(String postId, String cmtId, CommentDto commentDto, Member member) {
+        if (postId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+        FreeBoard findBoard = getFreeBoardDetail(postId);
+        if (findBoard == null) {
+            return "board"; // 없는 게시물
+        }
+        if (member == null) {
+            return "non-member"; // 없는 회원(비회원)
+        }
+        if (cmtId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+        FreeBoardComment findComment = freeBoardCommentRepository.findByCmtId(Integer.valueOf(cmtId));
+        if (findComment == null) {
+            return "comment"; // 없는 댓글
+        }
+        if (findComment.getCmtUserNickname().equals(member.getUserNickname())) {
+
+            // 댓글 수정
+            findComment.setCmtContent(commentDto.getCmtContent());
+
+            freeBoardCommentRepository.save(findComment);
+
+            return "success";
+        }
+        return "member"; // 잘못된 사용자
+    }
+
+    /*
+        댓글 - 삭제
+     */
+    public String CommentDelete(String postId, String cmtId, Member member) {
+        if (postId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+        FreeBoard findBoard = getFreeBoardDetail(postId);
+        if (findBoard == null) {
+            return "board"; // 없는 게시물
+        }
+        if (member == null) {
+            return "non-member"; // 없는 회원(비회원)
+        }
+        if (cmtId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+        FreeBoardComment findComment = freeBoardCommentRepository.findByCmtId(Integer.valueOf(cmtId));
+        if (findComment == null) {
+            return "comment"; // 없는 댓글
+        }
+        if (findComment.getCmtUserNickname().equals(member.getUserNickname())) {
+            // 댓글 삭제
+            freeBoardCommentRepository.delete(findComment);
+
+            findBoard.setPostComment(findBoard.getPostComment()-1);
+            freeBoardRepository.save(findBoard);
+
+            return "success";
+        }
+        return "member"; // 잘못된 사용자
+    }
+
+    /*
+        조회수
+     */
+    public void PostViewCnt(FreeBoard freeBoardDetail) {
+        freeBoardDetail.setCountVisit(freeBoardDetail.getCountVisit()+1);
+        freeBoardRepository.save(freeBoardDetail);
     }
 }

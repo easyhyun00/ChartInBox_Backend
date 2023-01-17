@@ -31,6 +31,9 @@ public class BoardWriteController {
         postCategory; 카테고리(자유,리뷰,Q&A)
         postSpoiler; 스포일러(기본 false,true)
         postAnonym; 익명(기본 false, true)
+
+
+        다시~!!!!
      */
     @PostMapping("/movie-talk/write")
     public boolean MovieTalkWrite(@RequestBody BoardWriteDto boardWriteDto,

@@ -112,6 +112,8 @@ public class FreeBoardController {
                                                                   @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
         FreeBoard freeBoardDetail = freeBoardService.getFreeBoardDetail(postId);
 
+        freeBoardService.PostViewCnt(freeBoardDetail); // 조회수 증가
+
         FreeBoardDetailDto freeBoardDetailDto = new FreeBoardDetailDto();
         freeBoardDetailDto.setPostDetail(freeBoardDetail);
         freeBoardDetailDto.setComments(freeBoardService.getCommentList(postId));

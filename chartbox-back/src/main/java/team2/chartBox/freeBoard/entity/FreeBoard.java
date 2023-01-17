@@ -17,9 +17,6 @@ import java.time.LocalDateTime;
 // @AllArgsConstructor
 public class FreeBoard {
 
-    @Autowired
-    private FreeBoardService freeBoardService;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "POSTID")
@@ -68,7 +65,7 @@ public class FreeBoard {
         this.countVisit = countVisit;
         this.postCategory = postCategory;
         this.postLike = postLike;
-        this.postComment = freeBoardService.getCommentCnt(postId);
+        this.postComment = postComment;
         this.postSpoiler = postSpoiler;
         this.postAnonym = postAnonym;
     }

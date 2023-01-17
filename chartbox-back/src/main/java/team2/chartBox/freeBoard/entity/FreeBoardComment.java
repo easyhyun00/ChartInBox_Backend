@@ -3,6 +3,7 @@ package team2.chartBox.freeBoard.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import team2.chartBox.freeBoard.dto.CommentDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -34,5 +35,13 @@ public class FreeBoardComment {
     private LocalDateTime cmtDate;
 
     public FreeBoardComment() {
+    }
+
+    public FreeBoardComment(CommentDto commentDto, String postId) {
+        this.cmtPostId = Integer.valueOf(postId);
+        this.cmtContent = commentDto.getCmtContent();
+        this.cmtUserNickname = commentDto.getCmtUserNickname();
+        this.cmtReply = commentDto.getCmtReply();
+        this.cmtDate = LocalDateTime.now().plusHours(9L);
     }
 }

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FreeBoardCommentRepository extends JpaRepository<FreeBoardComment, Long> {
     List<FreeBoardComment> findAllByCmtPostId(Integer postId);
+    FreeBoardComment findByCmtId(Integer cmtId);
 }
