@@ -43,6 +43,9 @@ public class FreeBoard {
     @Column(name = "POSTLIKE")
     private int postLike;
 
+    @Column(name = "POSTLIKELIST")
+    private String postLikeList;
+
     @Column(name = "POSTCOMMENT")
     private int postComment;
 
@@ -52,22 +55,27 @@ public class FreeBoard {
     @Column(name = "POSTANONYM")
     private String postAnonym; // 익명 체크
 
+    @Column(name = "POSTREPORT")
+    private String postReport; // 게사물 신고
+
     // 생성자
     public FreeBoard() {
     }
 
-    public FreeBoard(Integer postId, String postTitle, String postContent, LocalDateTime postDate, String postUserNickname, int countVisit, String postCategory, int postLike, int postComment, String postSpoiler, String postAnonym) {
+    public FreeBoard(Integer postId, String postTitle, String postContent, LocalDateTime postDate, String postUserNickname, int countVisit, String postCategory, int postLike, String postLikeList, int postComment, String postSpoiler, String postAnonym, String postReport) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postContent = postContent;
-        this.postDate = LocalDateTime.now().plusHours(9L);
+        this.postDate = postDate;
         this.postUserNickname = postUserNickname;
         this.countVisit = countVisit;
         this.postCategory = postCategory;
         this.postLike = postLike;
+        this.postLikeList = postLikeList;
         this.postComment = postComment;
         this.postSpoiler = postSpoiler;
         this.postAnonym = postAnonym;
+        this.postReport = postReport;
     }
 
     public FreeBoard(BoardWriteDto boardWriteDto) {

@@ -2,17 +2,25 @@ package team2.chartBox.freeBoard.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import team2.chartBox.freeBoard.dto.BoardWriteDto;
 import team2.chartBox.freeBoard.dto.CommentDto;
+import team2.chartBox.freeBoard.dto.MovieTalkDto;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.entity.FreeBoardComment;
 import team2.chartBox.freeBoard.repository.FreeBoardCommentRepository;
 import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,37 +30,62 @@ public class FreeBoardService {
     @Autowired
     public FreeBoardRepository freeBoardRepository;
     public FreeBoardCommentRepository freeBoardCommentRepository;
+    public ModelMapper mapper;
 
     /*
         무비토크 - 전체 글 목록
      */
-    public List<FreeBoard> getMovieTalkList() {
-        return freeBoardRepository.findAll();
+    public List<MovieTalkDto> getMovieTalkList() {
+        List<FreeBoard> boardList = freeBoardRepository.findAll(Sort.by(Sort.Direction.DESC, "postId"));
+
+        List<MovieTalkDto> returnList = boardList.stream()
+                .map(post -> mapper.map(post,MovieTalkDto.class))
+                .collect(Collectors.toList());
+
+        return returnList;
     }
 
     /*
         무비토크 - 자유게시판 목록
      */
-    public List<FreeBoard> getFreeBoardList() {
-        return freeBoardRepository.findAllByPostCategory("자유");
+    public List<MovieTalkDto> getFreeBoardList() {
+        List<FreeBoard> boardList = freeBoardRepository.findAllByPostCategory("자유",Sort.by(Sort.Direction.DESC, "postId"));
+
+        List<MovieTalkDto> returnList = boardList.stream()
+                .map(post -> mapper.map(post,MovieTalkDto.class))
+                .collect(Collectors.toList());
+
+        return returnList;
     }
 
     /*
         무비토크 - 리뷰게시판 목록
      */
-    public List<FreeBoard> getReviewBoardList() {
-        return freeBoardRepository.findAllByPostCategory("리뷰");
+    public List<MovieTalkDto> getReviewBoardList() {
+        List<FreeBoard> boardList = freeBoardRepository.findAllByPostCategory("리뷰",Sort.by(Sort.Direction.DESC, "postId"));
+
+        List<MovieTalkDto> returnList = boardList.stream()
+                .map(post -> mapper.map(post,MovieTalkDto.class))
+                .collect(Collectors.toList());
+
+        return returnList;
     }
 
     /*
-        무비토크 - 리뷰게시판 목록
+        무비토크 - Q&A 게시판 목록
      */
-    public List<FreeBoard> getQnaBoardList() {
-        return freeBoardRepository.findAllByPostCategory("Q&A");
+    public List<MovieTalkDto> getQnaBoardList() {
+        List<FreeBoard> boardList = freeBoardRepository.findAllByPostCategory("Q&A",Sort.by(Sort.Direction.DESC, "postId"));
+
+        List<MovieTalkDto> returnList = boardList.stream()
+                .map(post -> mapper.map(post,MovieTalkDto.class))
+                .collect(Collectors.toList());
+
+        return returnList;
     }
 
     /*
-        글 보기
+        글 상세 보기
      */
     public FreeBoard getFreeBoardDetail(String postId) {
         return freeBoardRepository.findByPostId(Integer.parseInt(postId));
@@ -239,5 +272,107 @@ public class FreeBoardService {
     public void PostViewCnt(FreeBoard freeBoardDetail) {
         freeBoardDetail.setCountVisit(freeBoardDetail.getCountVisit()+1);
         freeBoardRepository.save(freeBoardDetail);
+    }
+
+    /*
+        신고
+     */
+    public String PostReport(String postId, Member member) throws ParseException {
+
+        if (member == null) {
+            return "non-member"; // 비회원 신고
+        }
+        if (postId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+
+        FreeBoard findBoard = getFreeBoardDetail(postId);
+
+        if (findBoard == null) {
+            return "board"; // 없는 게시물
+        }
+
+        String postReport = findBoard.getPostReport();
+
+        if (postReport == null) { // 신고한 회원 새로 추가
+            JSONArray reportMember = new JSONArray();
+            reportMember.add(member.getUserNickname());
+            findBoard.setPostReport(reportMember.toString());
+            freeBoardRepository.save(findBoard);
+            log.info(reportMember.toString());
+        } else { // 신고한 회원 추가
+            JSONParser jsonParser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) jsonParser.parse(postReport);
+
+            if (jsonArray.contains(member.getUserNickname())) { // 이미 신고
+                log.info("이미 신고한 회원");
+                return "overlap";
+            }
+
+            jsonArray.add(member.getUserNickname());
+
+            if (jsonArray.size() == 5) { // 게시물 삭제
+                freeBoardRepository.delete(findBoard);
+                log.info("게시물 삭제");
+                return "delete";
+
+            } else {
+                findBoard.setPostReport(jsonArray.toString());
+                freeBoardRepository.save(findBoard);
+                log.info(jsonArray.toString());
+            }
+
+        }
+        return "success";
+    }
+
+    /*
+        좋아요
+     */
+    public String PostLike(String postId,Member member) throws ParseException {
+
+        if (member == null) {
+            return "non-member"; // 비회원 신고
+        }
+        if (postId == null) {
+            return "pathVariable"; // 잘못된 url 경로
+        }
+
+        FreeBoard findBoard = getFreeBoardDetail(postId);
+
+        if (findBoard == null) {
+            return "board"; // 없는 게시물
+        }
+
+        String likeList = findBoard.getPostLikeList();
+
+        if (likeList == null) { // 좋아요 회원 새로 추가
+            JSONArray likeMemberList = new JSONArray();
+            likeMemberList.add(member.getUserNickname());
+            findBoard.setPostLikeList(likeMemberList.toString());
+            findBoard.setPostLike(findBoard.getPostLike()+1);
+            freeBoardRepository.save(findBoard);
+            log.info(likeMemberList.toString());
+        } else { // 이미 좋아요 회원 있는 경우
+            JSONParser jsonParser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) jsonParser.parse(likeList);
+
+            if (jsonArray.contains(member.getUserNickname())) { // 이미 좋아요 누름
+                jsonArray.remove(member.getUserNickname());
+                findBoard.setPostLikeList(jsonArray.toString());
+                findBoard.setPostLike(findBoard.getPostLike()-1);
+                freeBoardRepository.save(findBoard);
+                log.info("좋아요 취소");
+                return "cancel";
+            } else { // 좋아요
+                jsonArray.add(member.getUserNickname());
+                findBoard.setPostLikeList(jsonArray.toString());
+                findBoard.setPostLike(findBoard.getPostLike()+1);
+                freeBoardRepository.save(findBoard);
+                log.info("좋아요");
+            }
+        }
+
+        return "success";
     }
 }

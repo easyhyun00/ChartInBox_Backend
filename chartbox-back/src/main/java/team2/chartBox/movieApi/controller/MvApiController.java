@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team2.chartBox.SessionConst;
+import team2.chartBox.freeBoard.dto.MovieTalkDto;
+import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.movieApi.dto.MvApiDto;
 import team2.chartBox.movieApi.dto.MvDetailDto;
@@ -17,14 +19,17 @@ import team2.chartBox.movieApi.service.FindMvService;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 @RestController
 @Slf4j
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class MvApiController {
 
     @Autowired
     private FindMvService findMvService;
+    private FreeBoardService freeBoardService;
 
     @GetMapping("/mv/title/{mvTitle}") // KMDb - 이름 검색
     public void mvInfo(@PathVariable String mvTitle) throws IOException, ParseException {
@@ -51,6 +56,16 @@ public class MvApiController {
 
         mvDetailDto.setMovieDetail(mvApiDto);
 
+        List<MovieTalkDto> reviewBoardList = freeBoardService.getReviewBoardList();
+        if (reviewBoardList.size() > 10)
+            reviewBoardList.subList(0,10);
+        mvDetailDto.setReviewBoardList(reviewBoardList);
+
+        List<MovieTalkDto> qnaBoardList = freeBoardService.getQnaBoardList();
+        if (qnaBoardList.size() > 10)
+            qnaBoardList.subList(0,10);
+        mvDetailDto.setQnaBoardList(qnaBoardList);
+
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
@@ -61,9 +76,15 @@ public class MvApiController {
         영화 스크랩 하기
      */
     @PostMapping("/movie-info/{mvId}/scrap")
-    public void movieScrap(@PathVariable String mvId,
+    public ResponseEntity movieScrap(@PathVariable String mvId,
                            @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException {
+
+        if (member == null) {
+            return ResponseEntity.badRequest().body(false);
+        }
+
         boolean scrapState = findMvService.movieClipping(member.getUserNickname(), mvId);
 
+        return ResponseEntity.ok().body(true);
     }
 }

@@ -179,9 +179,10 @@ public class MvApiService {
             String rating = (String) tmp.get("rating");
             String nation = (String) tmp.get("nation");
             String prodYear = (String) tmp.get("prodYear");
-            String posters = ((String) tmp.get("posters")).replace("|"," ");
+            String posters = ((String) tmp.get("posters"));
+            String poster = posters.substring(posters.lastIndexOf("|")+1);
 
-            mvApiDto = new MvApiDto(originTitle, titleEng, mvTitleOrg, plotText, genre, runtime, rating, nation, prodYear, posters, actor, director);
+            mvApiDto = new MvApiDto(originTitle, titleEng, mvTitleOrg, plotText, genre, runtime, rating, nation, prodYear, poster, actor, director);
         }
 
         rd.close();

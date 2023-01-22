@@ -1,6 +1,9 @@
 package team2.chartBox.freeBoard.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,18 +25,10 @@ public class BoardWriteController {
     private FreeBoardRepository freeBoardRepository;
 
     /*
-        무비 토크 - 게시물 작성(회원만 작성할 수 있도록)
-
-        프론트로 받는 데이터 =>
-        postTitle; 제목
-        postContent; 내용
-        postUserNickname; 작성자
-        postCategory; 카테고리(자유,리뷰,Q&A)
-        postSpoiler; 스포일러(기본 false,true)
-        postAnonym; 익명(기본 false, true)
-
-
-        다시~!!!!
+        무비 토크 - 게시물 작성
+        다시~!
+        성공 - “success”
+        실패 - “non-member’ - 없는 회원(비회원), “member” - 잘못된 회원(다른 회원)
      */
     @PostMapping("/movie-talk/write")
     public boolean MovieTalkWrite(@RequestBody BoardWriteDto boardWriteDto,
@@ -69,7 +64,7 @@ public class BoardWriteController {
      */
     @PostMapping("/movie-talk/{postId}/edit")
     public ResponseEntity MovieTalkEdit(@PathVariable(required = false) String postId, @RequestBody BoardWriteDto boardWriteDto,
-                              @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+                                        @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
 
         String strMsg = freeBoardService.EditBoardSubmit(postId, boardWriteDto, member);
         if (strMsg == "success") {
@@ -84,13 +79,56 @@ public class BoardWriteController {
      */
     @PostMapping("movie-talk/{postId}/delete")
     public ResponseEntity MovieTalkDelete(@PathVariable(required = false) String postId,
-                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+                                          @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
         String strMsg = freeBoardService.DeleteBoardSubmit(postId,member);
         if (strMsg == "success") {
             return ResponseEntity.ok().body(strMsg); // 성공
         } else {
             return ResponseEntity.badRequest().body(strMsg); // 실패
         }
+    }
+
+    /*
+        무비 토크 - 게시물 좋아요
+
+        비회원 - 좋아요 불가
+        회원 - 좋아요
+        회원 - 이미 좋아요 누름 -> 좋아요 취소
+
+     */
+    @PostMapping("movie-talk/{postId}/like")
+    public ResponseEntity MovieTalkLike(@PathVariable(required = false) String postId,
+                                 @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException {
+
+        String strMsg = freeBoardService.PostLike(postId, member);
+
+        if (strMsg == "success" || strMsg == "cancel") {
+            return ResponseEntity.ok().body(strMsg); // 성공
+        } else {
+            return ResponseEntity.badRequest().body(strMsg); // 실패
+        }
+    }
+
+    /*
+        무비 토크 - 게시물 신고
+
+        비회원 - 신고 불가
+        회원 - 신고
+        회원 - 이미 신고 -> 신고 불가
+        신고 5개 이상 -> 자동 글 삭제제
+     */
+    @PostMapping("movie-talk/{postId}/report")
+    public ResponseEntity MovieTalkReport(@PathVariable(required = false) String postId,
+                                          @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException {
+
+        String strMsg = freeBoardService.PostReport(postId, member);
+
+        if (strMsg == "success" || strMsg == "overlap" || strMsg == "delete") {
+            return ResponseEntity.ok().body(strMsg); // 성공
+        } else {
+            return ResponseEntity.badRequest().body(strMsg); // 실패
+        }
+
     }
 
 }

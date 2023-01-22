@@ -33,7 +33,7 @@ public class FreeBoardController {
         freeBoardDto.setBoardList(freeBoardService.getMovieTalkList());
 
         if (member == null) {
-            freeBoardDto.setUserNickname("비회원");
+            freeBoardDto.setUserNickname("");
         } else {
             freeBoardDto.setUserNickname(member.getUserNickname());
         }
@@ -53,7 +53,7 @@ public class FreeBoardController {
         freeBoardDto.setBoardList(freeBoardService.getFreeBoardList());
 
         if (member == null) {
-            freeBoardDto.setUserNickname("비회원");
+            freeBoardDto.setUserNickname("");
         } else {
             freeBoardDto.setUserNickname(member.getUserNickname());
         }
@@ -73,7 +73,7 @@ public class FreeBoardController {
         freeBoardDto.setBoardList(freeBoardService.getReviewBoardList());
 
         if (member == null) {
-            freeBoardDto.setUserNickname("비회원");
+            freeBoardDto.setUserNickname("");
         } else {
             freeBoardDto.setUserNickname(member.getUserNickname());
         }
@@ -93,7 +93,7 @@ public class FreeBoardController {
         freeBoardDto.setBoardList(freeBoardService.getQnaBoardList());
 
         if (member == null) {
-            freeBoardDto.setUserNickname("비회원");
+            freeBoardDto.setUserNickname("");
         } else {
             freeBoardDto.setUserNickname(member.getUserNickname());
         }
@@ -117,9 +117,10 @@ public class FreeBoardController {
         FreeBoardDetailDto freeBoardDetailDto = new FreeBoardDetailDto();
         freeBoardDetailDto.setPostDetail(freeBoardDetail);
         freeBoardDetailDto.setComments(freeBoardService.getCommentList(postId));
+        freeBoardDetailDto.setPostList(freeBoardService.getMovieTalkList());
 
         if (member == null) {
-            freeBoardDetailDto.setUserNickname("비회원");
+            freeBoardDetailDto.setUserNickname("");
         } else {
             freeBoardDetailDto.setUserNickname(member.getUserNickname());
         }

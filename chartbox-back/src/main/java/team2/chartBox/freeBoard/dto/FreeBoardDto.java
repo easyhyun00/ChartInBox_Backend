@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /*
-    게시물 상세 보기
+    게시물 목록 보기
  */
 @Getter
 @Setter

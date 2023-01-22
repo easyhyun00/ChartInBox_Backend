@@ -3,7 +3,7 @@ package team2.chartBox.member.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import team2.chartBox.SessionConst;
 import team2.chartBox.member.dto.UserEmailResponse;
@@ -16,6 +16,8 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.time.Duration;
 
 @RestController
 @Slf4j
@@ -41,8 +43,10 @@ public class LoginController {
 
         String strMsg = memberService.loginService(findMember, loginResponse);
 
-        if (strMsg != "success") // userEmail: 없는 이메일, userPassword: 잘못된 비밀번호, auth: 인증X 사용자
+        if (strMsg != "success") {// userEmail: 없는 이메일, userPassword: 잘못된 비밀번호, auth: 인증X 사용자
             return ResponseEntity.badRequest().body(strMsg);
+            // return null;
+        }
 
         log.info("로그인 성공 {}", findMember.getUserEmail());
 
@@ -50,7 +54,17 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER,findMember);
 
-        return ResponseEntity.ok().body(strMsg);
+         HttpHeaders headers= new HttpHeaders();
+         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+         // headers.set("mySession",session.getId());
+        // headers.setCacheControl("max-age=3600, must-revalidate, no-transform");
+
+        // CacheControl cacheControl = CacheControl.maxAge(Duration.ofDays(1));
+
+//        return ResponseEntity.ok()
+//                .cacheControl(cacheControl)
+//                .body("success");
+        return new ResponseEntity("success",headers, HttpStatus.OK);
     }
 
     /*

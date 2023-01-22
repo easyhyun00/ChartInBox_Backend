@@ -10,12 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import team2.chartBox.freeBoard.dto.MovieTalkDto;
+import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.mainHome.dto.MainHomeDto;
 import team2.chartBox.mainHome.service.MainHomeService;
 import team2.chartBox.schedul.service.MovieChartService;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -26,19 +29,25 @@ public class MainHomeController {
     @Autowired
     private MainHomeService mainHomeService;
     private MovieChartService movieChartService;
+    private FreeBoardService freeBoardService;
 
-    @GetMapping("/")
+    @GetMapping("/") // 메인 홈
     public ResponseEntity<MainHomeDto> home() throws IOException {
         MainHomeDto mainHomeDto = new MainHomeDto();
         mainHomeDto.setMvCharts(mainHomeService.getMvChartList());
 
+        List<MovieTalkDto> freeBoardList = freeBoardService.getFreeBoardList();
+        if (freeBoardList.size() > 10)
+            freeBoardList.subList(0,10);
+        mainHomeDto.setFreeBoardList(freeBoardList);
+
+        List<MovieTalkDto> reviewBoardList = freeBoardService.getReviewBoardList();
+        if (reviewBoardList.size() > 10)
+            reviewBoardList.subList(0,10);
+        mainHomeDto.setReviewBoardList(reviewBoardList);
+
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-
-        log.info("원래==> {}",mainHomeDto);
-
-
 
         return new ResponseEntity<>(mainHomeDto,headers, HttpStatus.OK);
     }
