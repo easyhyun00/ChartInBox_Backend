@@ -7,7 +7,7 @@ import team2.chartBox.freeBoard.entity.FreeBoard;
 import java.time.LocalDateTime;
 
 @Getter @Setter
-public class MovieTalkDto { // 게시물 목록
+public class MovieTalkDto { // 게시물 목록 상세
     private Integer postId;
     private String postCategory;
     private String postTitle;

@@ -14,6 +14,8 @@ import team2.chartBox.freeBoard.dto.MovieTalkDto;
 import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.mainHome.dto.MainHomeDto;
 import team2.chartBox.mainHome.service.MainHomeService;
+import team2.chartBox.nPartyBoard.dto.NPartyBoardListDetailDto;
+import team2.chartBox.nPartyBoard.service.NPartyBoardService;
 import team2.chartBox.schedul.service.MovieChartService;
 
 import java.io.IOException;
@@ -28,8 +30,8 @@ public class MainHomeController {
 
     @Autowired
     private MainHomeService mainHomeService;
-    private MovieChartService movieChartService;
     private FreeBoardService freeBoardService;
+    private NPartyBoardService nPartyBoardService;
 
     @GetMapping("/") // 메인 홈
     public ResponseEntity<MainHomeDto> home() throws IOException {
@@ -45,6 +47,11 @@ public class MainHomeController {
         if (reviewBoardList.size() > 10)
             reviewBoardList.subList(0,10);
         mainHomeDto.setReviewBoardList(reviewBoardList);
+
+        List<NPartyBoardListDetailDto> nPartyBoardList = nPartyBoardService.getNPartyList();
+        if (nPartyBoardList.size() > 10)
+            nPartyBoardList.subList(0,10);
+        mainHomeDto.setNPartyBoardList(nPartyBoardList);
 
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

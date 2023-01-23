@@ -28,7 +28,7 @@ public class BoardWriteController {
         무비 토크 - 게시물 작성
         다시~!
         성공 - “success”
-        실패 - “non-member’ - 없는 회원(비회원), “member” - 잘못된 회원(다른 회원)
+        실패 - “non-member’ - 없는 회원(비회원)
      */
     @PostMapping("/movie-talk/write")
     public boolean MovieTalkWrite(@RequestBody BoardWriteDto boardWriteDto,
