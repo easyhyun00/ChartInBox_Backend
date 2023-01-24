@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long> {
     FreeBoard findByPostId(Integer postId);
-    List<FreeBoard> findAllByPostUserNickname(String postUserNickname);
+    List<FreeBoard> findAllByPostUserNickname(String postUserNickname, Sort sort);
     List<FreeBoard> findAllByPostCategory(String postCategory, Sort sort);
 }

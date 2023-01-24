@@ -2,17 +2,32 @@ package team2.chartBox.myPage.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import team2.chartBox.freeBoard.entity.FreeBoard;
+import team2.chartBox.freeBoard.entity.FreeBoardComment;
+import team2.chartBox.freeBoard.repository.FreeBoardCommentRepository;
 import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.member.repository.MemberRepository;
+import team2.chartBox.movieApi.dto.MvScrapDto;
+import team2.chartBox.movieApi.service.FindMvService;
 import team2.chartBox.myPage.dto.EditNicknameResponse;
 import team2.chartBox.myPage.dto.EditPasswordResponse;
+import team2.chartBox.myPage.dto.MyBoardListDto;
+import team2.chartBox.myPage.dto.MyCommentListDto;
+import team2.chartBox.nPartyBoard.entity.NPartyBoard;
+import team2.chartBox.nPartyBoard.repository.NPartyBoardRepository;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +38,9 @@ public class MyPageService {
     private MemberRepository memberRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private FreeBoardRepository freeBoardRepository;
+    private FreeBoardCommentRepository freeBoardCommentRepository;
+    private FindMvService findMvService;
+    public ModelMapper mapper;
 
     /*
         닉네임 변경
@@ -72,7 +90,59 @@ public class MyPageService {
     /*
         회원이 작성한 글 목록
      */
-    public List<FreeBoard> getFreeBoardList(String userNickname) {
-        return freeBoardRepository.findAllByPostUserNickname(userNickname);
+    public List<MyBoardListDto> getBoardList(String userNickname) {
+
+        List<FreeBoard> boardList = freeBoardRepository.findAllByPostUserNickname(userNickname, Sort.by(Sort.Direction.DESC, "postId"));
+        List<MyBoardListDto> resultList = boardList.stream()
+                .map(post -> mapper.map(post,MyBoardListDto.class))
+                .collect(Collectors.toList());
+
+        return resultList;
+    }
+
+    /*
+        회원이 작성한 댓글 목록
+     */
+    public List<MyCommentListDto> getCommentList(String userNickname) {
+
+        List<MyCommentListDto> list = new ArrayList<>();
+
+        List<FreeBoardComment> findComment = freeBoardCommentRepository.findAllByCmtUserNickname(userNickname,Sort.by(Sort.Direction.DESC, "cmtId"));
+
+        for (int i = 0; i < findComment.size(); i++) {
+            FreeBoardComment comment = findComment.get(i);
+            MyCommentListDto myCommentListDto = new MyCommentListDto();
+
+            myCommentListDto.setCmtContent(comment.getCmtContent());
+            myCommentListDto.setCmtPostId(comment.getCmtPostId());
+            myCommentListDto.setCmtDate(comment.getCmtDate().toString());
+            myCommentListDto.setCmtId(comment.getCmtId());
+            FreeBoard findBoard = freeBoardRepository.findByPostId(comment.getCmtPostId());
+            myCommentListDto.setBoardTitle(findBoard.getPostTitle());
+
+            list.add(myCommentListDto);
+        }
+        return list;
+    }
+
+
+    /*
+        스크랩 영화 목록
+     */
+    public List<MvScrapDto> getScrapMovieList(String userNickname) throws ParseException, IOException {
+
+        JSONParser jsonParser = new JSONParser();
+        Member findMember = memberRepository.findByUserNickname(userNickname);
+        String movieScrap = findMember.getUserMovieScrap();
+        JSONArray jsonArray = (JSONArray) jsonParser.parse(movieScrap);
+
+        List<MvScrapDto> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            String movieId = jsonArray.get(i).toString();
+            log.info(movieId);
+            MvScrapDto mvScrap = findMvService.findByScrap(movieId);
+            list.add(mvScrap);
+        }
+        return list;
     }
 }

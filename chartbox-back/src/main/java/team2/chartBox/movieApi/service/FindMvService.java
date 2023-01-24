@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.member.repository.MemberRepository;
 import team2.chartBox.movieApi.dto.MvApiDto;
+import team2.chartBox.movieApi.dto.MvScrapDto;
 
 import java.io.IOException;
 
@@ -38,6 +39,19 @@ public class FindMvService {
      */
     public MvApiDto findByMvId(String mvId) throws IOException, ParseException {
         return mvApiService.requestMovieById(mvId);
+    }
+
+    /*
+        id로 영화 찾기
+        - 스크랩 목록
+     */
+    public MvScrapDto findByScrap(String mvId) throws IOException, ParseException {
+        MvApiDto mvApiDto = mvApiService.requestMovieById(mvId);
+        MvScrapDto mvScrapDto = new MvScrapDto();
+        mvScrapDto.setMvId(mvId);
+        mvScrapDto.setMvTitle(mvApiDto.getMvTitle());
+        mvScrapDto.setMvPoster(mvApiDto.getMvPoster());
+        return mvScrapDto;
     }
 
     /*

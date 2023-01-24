@@ -1,6 +1,8 @@
 package team2.chartBox.myPage.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,16 +13,21 @@ import team2.chartBox.SessionConst;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
+import team2.chartBox.movieApi.dto.MvScrapDto;
 import team2.chartBox.myPage.dto.*;
 import team2.chartBox.myPage.service.MyPageService;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
 @RestController
 @Slf4j
+@AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class MyPageController {
 
@@ -34,12 +41,31 @@ public class MyPageController {
         추후에 댓글, 스크랩한 영화
      */
     @GetMapping("/my-page")
-    public ResponseEntity<MyPageResponse> myPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+    public ResponseEntity<MyPageResponse> myPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
         MyPageResponse myPageResponse = new MyPageResponse();
 
         myPageResponse.setUserEmail(member.getUserEmail());
         myPageResponse.setUserNickname(member.getUserNickname());
-        myPageResponse.setFreeBoard(myPageService.getFreeBoardList(member.getUserNickname()));
+
+        // 글 목록
+        List<MyBoardListDto> boardList = myPageService.getBoardList(member.getUserNickname());
+        if (boardList.size()>10) {
+            boardList.subList(0,10);
+        }
+        myPageResponse.setBoardList(boardList);
+
+        // 댓글 목록
+        List<MyCommentListDto> commentList = myPageService.getCommentList(member.getUserNickname());
+        if (commentList.size()>10)
+            commentList.subList(0,10);
+        myPageResponse.setCommentList(commentList);
+
+        // 스크랩 목록
+        List<MvScrapDto> scrapMovieList = myPageService.getScrapMovieList(member.getUserNickname()); // 영화 스크랩 목록
+        if (scrapMovieList.size() > 10) {
+            scrapMovieList.subList(0,10);
+        }
+        myPageResponse.setScrapList(scrapMovieList);
 
         HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -107,11 +133,26 @@ public class MyPageController {
 
     /*
         [내가 쓴 글 상세 보기]
-        그런데 생각해보니깐 자유게시판만이네,,
      */
-    @GetMapping("my-page/free-board")
-    public List<FreeBoard> myPageMyFreeBoard(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
-        return myPageService.getFreeBoardList(member.getUserNickname());
+    @GetMapping("/my-page/post")
+    public List<MyBoardListDto> myPageMyFreeBoard(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+        return myPageService.getBoardList(member.getUserNickname());
+    }
+
+    /*
+        [내가 쓴 댓글 상세 보기]
+     */
+    @GetMapping("/my-page/comment")
+    public List<MyCommentListDto> myPageMyComment(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+        return myPageService.getCommentList(member.getUserNickname());
+    }
+
+    /*
+        [내가 스크랩한 영화 페이지]
+     */
+    @GetMapping("/my-page/scrap")
+    public List<MvScrapDto> myPageMovieScrap(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+        return myPageService.getScrapMovieList(member.getUserNickname());
     }
 
 }

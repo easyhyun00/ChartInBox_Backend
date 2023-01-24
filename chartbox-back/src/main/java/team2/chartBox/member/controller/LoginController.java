@@ -23,6 +23,7 @@ import java.time.Duration;
 @Slf4j
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "*")
 public class LoginController {
 
     @Autowired
@@ -64,7 +65,7 @@ public class LoginController {
 //        return ResponseEntity.ok()
 //                .cacheControl(cacheControl)
 //                .body("success");
-        return new ResponseEntity("success",headers, HttpStatus.OK);
+        return new ResponseEntity(findMember.getUserNickname(),headers, HttpStatus.OK);
     }
 
     /*

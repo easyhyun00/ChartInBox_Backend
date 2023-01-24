@@ -7,7 +7,9 @@ import lombok.Setter;
 public class MyPageResponse {
     private String userEmail;
     private String userNickname;
-    private Object freeBoard;
+    private Object boardList;
+    private Object commentList;
+    private Object scrapList;
 
     public MyPageResponse() {
     }
