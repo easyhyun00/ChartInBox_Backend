@@ -193,7 +193,6 @@ public class MvApiService {
             mvListDto.setMvId(id);
 
             String prodYear = (String) tmp.get("prodYear");
-            log.info("연도 {}",prodYear);
 
             list.add(mvListDto);
 

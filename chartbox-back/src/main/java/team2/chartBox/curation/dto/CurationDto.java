@@ -12,7 +12,6 @@ public class CurationDto {
     private String movieTitle;
     private String moviePoster;
     private String movieAge;
-    private String curationCatergory;
 
     public CurationDto() {
     }

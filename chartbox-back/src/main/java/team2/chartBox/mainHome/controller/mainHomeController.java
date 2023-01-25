@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team2.chartBox.curation.dto.CurationDto;
+import team2.chartBox.curation.dto.CurationInfo;
 import team2.chartBox.curation.dto.CurationResponse;
 import team2.chartBox.curation.service.CurationService;
 import team2.chartBox.freeBoard.dto.MovieTalkDto;
@@ -44,10 +45,10 @@ public class MainHomeController {
         mainHomeDto.setMvCharts(mainHomeService.getMvChartList());
 
         // 큐레이션 - 개추운날
-        CurationResponse curationData = curationService.getCurationCold();
-        mainHomeDto.setCurationInfo(curationData.getCurationInfo());
+        CurationInfo curationCold = curationService.getCurationCold();
+        mainHomeDto.setCurationInfo(curationCold);
 
-        List<CurationDto> curationMovie = curationService.getCurationCategory("개추운날");
+        List<CurationDto> curationMovie = curationService.getCurationCategory(curationCold.getCurationCategory());
         mainHomeDto.setCurationList(curationMovie.subList(0,3));
 
         List<MovieTalkDto> freeBoardList = freeBoardService.getFreeBoardList();

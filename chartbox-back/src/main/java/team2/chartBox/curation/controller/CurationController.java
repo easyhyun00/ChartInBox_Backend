@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team2.chartBox.curation.dto.CurationDto;
+import team2.chartBox.curation.dto.CurationInfo;
 import team2.chartBox.curation.dto.CurationResponse;
 import team2.chartBox.curation.service.CurationService;
 
@@ -21,33 +22,42 @@ public class CurationController {
     @Autowired
     public CurationService curationService;
 
-    @GetMapping("/curation/snow")
-    public ResponseEntity curationSnow() {
-        List<CurationDto> list = curationService.getCurationCategory("눈오는날");
-        return ResponseEntity.ok().body(list);
-    }
+//    @GetMapping("/curation/snow")
+//    public ResponseEntity curationSnow() {
+//        List<CurationDto> list = curationService.getCurationCategory("눈오는날");
+//        return ResponseEntity.ok().body(list);
+//    }
+
+//    @GetMapping("/curation/rain")
+//    public ResponseEntity curationRain() {
+//        List<CurationDto> list = curationService.getCurationCategory("비오는날");
+//        return ResponseEntity.ok().body(list);
+//    }
 
     @GetMapping("/curation/cold")
     public ResponseEntity curationCold() {
-        CurationResponse curationCold = curationService.getCurationCold();
-        return ResponseEntity.ok().body(curationCold);
-    }
-
-    @GetMapping("/curation/rain")
-    public ResponseEntity curationRain() {
-        List<CurationDto> list = curationService.getCurationCategory("비오는날");
-        return ResponseEntity.ok().body(list);
+        CurationResponse curationResponse = new CurationResponse();
+        CurationInfo curationCold = curationService.getCurationCold();
+        curationResponse.setCurationInfo(curationCold);
+        curationResponse.setCurationMovie(curationService.getCurationCategory(curationCold.getCurationCategory()));
+        return ResponseEntity.ok().body(curationResponse);
     }
 
     @GetMapping("/curation/homeDate")
     public ResponseEntity curationHomeDate() {
-        CurationResponse curationHomeDate = curationService.getCurationHomeDate();
-        return ResponseEntity.ok().body(curationHomeDate);
+        CurationResponse curationResponse = new CurationResponse();
+        CurationInfo curationHomeDate = curationService.getCurationHomeDate();
+        curationResponse.setCurationInfo(curationHomeDate);
+        curationResponse.setCurationMovie(curationService.getCurationCategory(curationHomeDate.getCurationCategory()));
+        return ResponseEntity.ok().body(curationResponse);
     }
 
     @GetMapping("/curation/pick1")
     public ResponseEntity curationPick() {
-        CurationResponse curationPick1 = curationService.getCurationPick1();
-        return ResponseEntity.ok().body(curationPick1);
+        CurationResponse curationResponse = new CurationResponse();
+        CurationInfo curationPick1 = curationService.getCurationPick1();
+        curationResponse.setCurationInfo(curationPick1);
+        curationResponse.setCurationMovie(curationService.getCurationCategory(curationPick1.getCurationCategory()));
+        return ResponseEntity.ok().body(curationResponse);
     }
 }

@@ -13,10 +13,7 @@ import team2.chartBox.SessionConst;
 import team2.chartBox.freeBoard.dto.MovieTalkDto;
 import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.member.entity.Member;
-import team2.chartBox.movieApi.dto.MvApiDto;
-import team2.chartBox.movieApi.dto.MvDetailDto;
-import team2.chartBox.movieApi.dto.MvScrapDto;
-import team2.chartBox.movieApi.dto.MvSearchDto;
+import team2.chartBox.movieApi.dto.*;
 import team2.chartBox.movieApi.service.FindMvService;
 
 import java.io.IOException;
@@ -105,12 +102,18 @@ public class MvApiController {
         파라미터 아무것도 안 줄 때 startCount=0 ~ startCount=493 매번 랜덤 데이터
      */
     @GetMapping("/movie-explore")
-    public ResponseEntity movieExplore(String genre, String nation, String year) throws IOException, ParseException {
+    public ResponseEntity movieExplore2(String genre, String nation, String year) throws IOException, ParseException {
         log.info(genre); // 장르
         log.info(nation);
         log.info(year);
         List<MvScrapDto> list = findMvService.findByMvFilter(genre, nation, year);
-        log.info(String.valueOf(list.size()));
+        if (genre == null && nation == null && year == null) {
+            MvExploreDto mvExploreDto = new MvExploreDto();
+            mvExploreDto.setMovieExploreList(list);
+            List<MvCurationDto> curationList = findMvService.curationList();
+            mvExploreDto.setCurationList(curationList);
+            return ResponseEntity.ok().body(mvExploreDto);
+        }
         return ResponseEntity.ok().body(list);
     }
 }

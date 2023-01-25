@@ -3,17 +3,22 @@ package team2.chartBox.movieApi.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import team2.chartBox.curation.dto.CurationDto;
+import team2.chartBox.curation.dto.CurationInfo;
+import team2.chartBox.curation.dto.CurationResponse;
+import team2.chartBox.curation.service.CurationService;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.member.repository.MemberRepository;
 import team2.chartBox.movieApi.dto.MvApiDto;
+import team2.chartBox.movieApi.dto.MvCurationDto;
 import team2.chartBox.movieApi.dto.MvScrapDto;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 // @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class FindMvService {
     @Autowired
     private MvApiService mvApiService;
     private MemberRepository memberRepository;
+    private CurationService curationService;
 
     /*
         제목으로 영화 찾기
@@ -39,6 +45,51 @@ public class FindMvService {
      */
     public List<MvScrapDto> findByMvFilter(String mvGenre, String mvNation, String mvYear) throws IOException, ParseException {
         return mvApiService.requestMovieExplore(mvGenre, mvNation, mvYear);
+    }
+
+    /*
+        큐레이션
+     */
+    public List<MvCurationDto> curationList() {
+        List<MvCurationDto> list = new ArrayList<>();
+
+        MvCurationDto mvCurationDto1 = new MvCurationDto(); // 큐레이션1
+
+        CurationInfo curationCold = curationService.getCurationCold();
+        List<CurationDto> curationCategory1 = curationService.getCurationCategory(curationCold.getCurationCategory());
+        String moviePoster1 = curationCategory1.get(0).getMoviePoster();
+
+        mvCurationDto1.setCurationTitle(curationCold.getCurationTitle());
+        mvCurationDto1.setCurationUrl(curationCold.getCurationLink());
+        mvCurationDto1.setCurationPoster(moviePoster1);
+
+        list.add(mvCurationDto1);
+
+        MvCurationDto mvCurationDto2 = new MvCurationDto(); // 큐레이션2
+
+        CurationInfo curationHomeDate = curationService.getCurationHomeDate();
+        List<CurationDto> curationCategory2 = curationService.getCurationCategory(curationHomeDate.getCurationCategory());
+        String moviePoster2 = curationCategory2.get(0).getMoviePoster();
+
+        mvCurationDto2.setCurationTitle(curationHomeDate.getCurationTitle());
+        mvCurationDto2.setCurationUrl(curationHomeDate.getCurationLink());
+        mvCurationDto2.setCurationPoster(moviePoster2);
+
+        list.add(mvCurationDto2);
+
+        MvCurationDto mvCurationDto3 = new MvCurationDto(); // 큐레이션3
+
+        CurationInfo curationPick1 = curationService.getCurationPick1();
+        List<CurationDto> curationCategory3 = curationService.getCurationCategory(curationPick1.getCurationCategory());
+        String moviePoster3 = curationCategory3.get(0).getMoviePoster();
+
+        mvCurationDto3.setCurationTitle(curationPick1.getCurationTitle());
+        mvCurationDto3.setCurationUrl(curationPick1.getCurationLink());
+        mvCurationDto3.setCurationPoster(moviePoster3);
+
+        list.add(mvCurationDto3);
+
+        return list;
     }
 
     /*

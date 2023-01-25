@@ -35,7 +35,6 @@ public class CurationService {
             curationDto.setMovieTitle(curation.getMovieTitle());
             curationDto.setMoviePoster(curation.getMoviePoster());
             curationDto.setMovieAge(curation.getMovieAge());
-            curationDto.setCurationCatergory(curation.getCurationCategory());
 
             list.add(curationDto);
         }
@@ -45,55 +44,58 @@ public class CurationService {
     /*
         개추운날
      */
-    public CurationResponse getCurationCold() {
-        CurationResponse curationResponse = new CurationResponse();
-
-        curationResponse.setCurationMovie(getCurationCategory("개추운날"));
+    public CurationInfo getCurationCold() {
+//        CurationResponse curationResponse = new CurationResponse();
+//
+//        curationResponse.setCurationMovie(getCurationCategory("개추운날"));
 
         CurationInfo curationInfo = new CurationInfo();
         curationInfo.setCurationTitle("이불 밖은 위험해! 한파에 맞서는 영화");
         curationInfo.setCurationText("손이 시려워 꽁, 발이 시려워 꽁! 이불 속에서 전기장판 키고 즐기는 겨울에 어울리는 영화를 모아봤어요.");
         curationInfo.setCurationLink("/curation/cold");
+        curationInfo.setCurationCategory("개추운날");
 
-        curationResponse.setCurationInfo(curationInfo);
+        // curationResponse.setCurationInfo(curationInfo);
 
-        return curationResponse;
+        return curationInfo;
     }
 
     /*
         홈데이트
      */
-    public CurationResponse getCurationHomeDate() {
-        CurationResponse curationResponse = new CurationResponse();
-
-        curationResponse.setCurationMovie(getCurationCategory("홈데이트"));
+    public CurationInfo getCurationHomeDate() {
+//        CurationResponse curationResponse = new CurationResponse();
+//
+//        curationResponse.setCurationMovie(getCurationCategory("홈데이트"));
 
         CurationInfo curationInfo = new CurationInfo();
         curationInfo.setCurationTitle("집에서 데이트 할때 달달하게 보고싶은영화");
         curationInfo.setCurationText("둘이 있는 소중한시간, 영화와 함께 더 달달하게 보내세요:)");
         curationInfo.setCurationLink("/curation/homeDate");
+        curationInfo.setCurationCategory("홈데이트");
 
-        curationResponse.setCurationInfo(curationInfo);
+        // curationResponse.setCurationInfo(curationInfo);
 
-        return curationResponse;
+        return curationInfo;
     }
 
     /*
         기획자 인생 영화
      */
-    public CurationResponse getCurationPick1() {
-        CurationResponse curationResponse = new CurationResponse();
-
-        curationResponse.setCurationMovie(getCurationCategory("인생영화1"));
+    public CurationInfo getCurationPick1() {
+//        CurationResponse curationResponse = new CurationResponse();
+//
+//        curationResponse.setCurationMovie(getCurationCategory("인생영화1"));
 
         CurationInfo curationInfo = new CurationInfo();
         curationInfo.setCurationTitle("영화를 사랑하는 기획자들이 손꼽아 뽑은 인생영화");
         curationInfo.setCurationText("기획자들이 차곡차곡 모아놓은 인생영화, 오늘만 특별히 공개할게요!");
         curationInfo.setCurationLink("/curation/pick1");
+        curationInfo.setCurationCategory("인생영화1");
 
-        curationResponse.setCurationInfo(curationInfo);
+        // curationResponse.setCurationInfo(curationInfo);
 
-        return curationResponse;
+        return curationInfo;
     }
 
 }
