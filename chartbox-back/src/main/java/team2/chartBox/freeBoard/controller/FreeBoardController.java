@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import team2.chartBox.SessionConst;
 import team2.chartBox.freeBoard.dto.FreeBoardDetailDto;
 import team2.chartBox.freeBoard.dto.FreeBoardDto;
+import team2.chartBox.freeBoard.dto.PostDetailDto;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.member.entity.Member;
 
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 
 @RestController
 @Slf4j
@@ -114,8 +116,10 @@ public class FreeBoardController {
 
         freeBoardService.PostViewCnt(freeBoardDetail); // 조회수 증가
 
+        PostDetailDto postDetailDto = new PostDetailDto(freeBoardDetail);
+
         FreeBoardDetailDto freeBoardDetailDto = new FreeBoardDetailDto();
-        freeBoardDetailDto.setPostDetail(freeBoardDetail);
+        freeBoardDetailDto.setPostDetail(postDetailDto);
         freeBoardDetailDto.setComments(freeBoardService.getCommentList(postId));
         freeBoardDetailDto.setPostList(freeBoardService.getMovieTalkList());
 

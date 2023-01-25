@@ -14,7 +14,7 @@ public class MovieTalkDto { // 게시물 목록 상세
     private int postComment;
     private String postUserNickname;
     private String postAnonym; // 익명 체크
-    private LocalDateTime postDate;
+    private String postDate;
     private int countVisit;
     private int postLike;
 
@@ -28,7 +28,7 @@ public class MovieTalkDto { // 게시물 목록 상세
         this.postComment = freeBoard.getPostComment();
         this.postUserNickname = freeBoard.getPostUserNickname();
         this.postAnonym = freeBoard.getPostAnonym();
-        this.postDate = freeBoard.getPostDate();
+        this.postDate = freeBoard.getPostDate().toString();
         this.countVisit = freeBoard.getCountVisit();
         this.postLike = freeBoard.getCountVisit();
     }

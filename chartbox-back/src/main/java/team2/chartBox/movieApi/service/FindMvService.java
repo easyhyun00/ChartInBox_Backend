@@ -14,6 +14,7 @@ import team2.chartBox.movieApi.dto.MvApiDto;
 import team2.chartBox.movieApi.dto.MvScrapDto;
 
 import java.io.IOException;
+import java.util.List;
 
 // @RequiredArgsConstructor
 @AllArgsConstructor
@@ -29,8 +30,15 @@ public class FindMvService {
         제목으로 영화 찾기
         - 검색
      */
-    public void findByMvTitle(String mvTitle) throws IOException, ParseException {
-        mvApiService.requestMovie(mvTitle);
+    public List<MvScrapDto> findByMvTitle(String mvTitle) throws IOException, ParseException {
+        return mvApiService.requestMovie(mvTitle);
+    }
+
+    /*
+        작품 탐색 필터링
+     */
+    public List<MvScrapDto> findByMvFilter(String mvGenre, String mvNation, String mvYear) throws IOException, ParseException {
+        return mvApiService.requestMovieExplore(mvGenre, mvNation, mvYear);
     }
 
     /*
@@ -57,7 +65,7 @@ public class FindMvService {
     /*
         영화 스크랩 하기
      */
-    public boolean movieClipping(String userNickname, String userMovieScrap) throws ParseException {
+    public String movieClipping(String userNickname, String userMovieScrap) throws ParseException {
         log.info(userMovieScrap);
         Member member = memberRepository.findByUserNickname(userNickname);
         if(member.getUserMovieScrap()==null) { // 새로 추가
@@ -66,7 +74,7 @@ public class FindMvService {
             member.setUserMovieScrap(mvClipList.toString());
             memberRepository.save(member);
             log.info(mvClipList.toString());
-            return true;
+            return "add";
         } else { // 수정해서 추가
             JSONParser jsonParser = new JSONParser();
             String movieScrapList = member.getUserMovieScrap();
@@ -78,14 +86,14 @@ public class FindMvService {
                 memberRepository.save(member);
                 log.info("스크랩 취소");
                 log.info(jsonArray.toString());
-                return false;
+                return "cancel";
             } else { // 스크랩하지 않은 영화
                 jsonArray.add(userMovieScrap);
                 member.setUserMovieScrap(jsonArray.toString());
                 memberRepository.save(member);
                 log.info("스크랩 영화 추가");
                 log.info(jsonArray.toString());
-                return true;
+                return "add";
             }
 
         }

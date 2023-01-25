@@ -92,12 +92,17 @@ public class MyPageService {
      */
     public List<MyBoardListDto> getBoardList(String userNickname) {
 
-        List<FreeBoard> boardList = freeBoardRepository.findAllByPostUserNickname(userNickname, Sort.by(Sort.Direction.DESC, "postId"));
-        List<MyBoardListDto> resultList = boardList.stream()
-                .map(post -> mapper.map(post,MyBoardListDto.class))
-                .collect(Collectors.toList());
+        List<MyBoardListDto> list = new ArrayList<>();
 
-        return resultList;
+        List<FreeBoard> boardList = freeBoardRepository.findAllByPostUserNickname(userNickname, Sort.by(Sort.Direction.DESC, "postId"));
+
+        for (int i = 0; i < boardList.size(); i++) {
+            FreeBoard board = boardList.get(i);
+            MyBoardListDto myBoardListDto = new MyBoardListDto(board);
+            list.add(myBoardListDto);
+        }
+
+        return list;
     }
 
     /*

@@ -18,11 +18,6 @@ public class MovieChartService {
     @Autowired
     public MovieChartRepository movieChartRepository;
 
-//    private WebDriver driver;
-//    public static String WEB_DRIVER_ID = "webdriver.chrome.driver"; // Properties 설정
-//    public static String WEB_DRIVER_PATH = "C:/Users/2455j/chromedriver.exe"; // WebDriver 경로
-//    private String base_url;
-
     /*
         영화 예매 차트
      */
@@ -99,15 +94,4 @@ public class MovieChartService {
         }
     }
 
-//    /*
-//        OTT 차트
-//        키노라이츠, 셀레니움으로 크롤링
-//        어렵당
-//    */
-//    public void OTTChart() throws Exception {
-//
-//        System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
-//        driver=(WebDriver) new ChromeDriver();
-//
-//    }
 }

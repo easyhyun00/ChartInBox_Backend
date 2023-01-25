@@ -15,6 +15,8 @@ import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.movieApi.dto.MvApiDto;
 import team2.chartBox.movieApi.dto.MvDetailDto;
+import team2.chartBox.movieApi.dto.MvScrapDto;
+import team2.chartBox.movieApi.dto.MvSearchDto;
 import team2.chartBox.movieApi.service.FindMvService;
 
 import java.io.IOException;
@@ -31,16 +33,25 @@ public class MvApiController {
     private FindMvService findMvService;
     private FreeBoardService freeBoardService;
 
-    @GetMapping("/mv/title/{mvTitle}") // KMDb - 이름 검색
-    public void mvInfo(@PathVariable String mvTitle) throws IOException, ParseException {
-        findMvService.findByMvTitle(mvTitle);
+    /*
+        영화 검색 페이지
+     */
+    @GetMapping("/movie-search/{mvTitle}")
+    public MvSearchDto movieSearchPage(@PathVariable String mvTitle) throws IOException, ParseException {
+        log.info(mvTitle);
+
+        MvSearchDto mvSearchDto = new MvSearchDto();
+        mvSearchDto.setSearchTitle(mvTitle);
+        mvSearchDto.setSearchList(findMvService.findByMvTitle(mvTitle));
+
+        return mvSearchDto;
     }
 
     /*
         영화 상세보기
      */
     @GetMapping("/movie-info/{mvId}") // KMDb - movieId 검색
-    public ResponseEntity<MvDetailDto> mvInfo2(@PathVariable String mvId,
+    public ResponseEntity<MvDetailDto> mvInfoDetail(@PathVariable String mvId,
                                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws IOException, ParseException {
 
         MvDetailDto mvDetailDto = new MvDetailDto();
@@ -83,8 +94,23 @@ public class MvApiController {
             return ResponseEntity.badRequest().body(false);
         }
 
-        boolean scrapState = findMvService.movieClipping(member.getUserNickname(), mvId);
+        String scrapState = findMvService.movieClipping(member.getUserNickname(), mvId);
 
-        return ResponseEntity.ok().body(true);
+        return ResponseEntity.ok().body(scrapState);
+    }
+
+    /*
+        영화 작품 탐색 페이지
+        @RequestParam
+        파라미터 아무것도 안 줄 때 startCount=0 ~ startCount=493 매번 랜덤 데이터
+     */
+    @GetMapping("/movie-explore")
+    public ResponseEntity movieExplore(String genre, String nation, String year) throws IOException, ParseException {
+        log.info(genre); // 장르
+        log.info(nation);
+        log.info(year);
+        List<MvScrapDto> list = findMvService.findByMvFilter(genre, nation, year);
+        log.info(String.valueOf(list.size()));
+        return ResponseEntity.ok().body(list);
     }
 }

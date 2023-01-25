@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import team2.chartBox.curation.dto.CurationDto;
+import team2.chartBox.curation.dto.CurationResponse;
+import team2.chartBox.curation.service.CurationService;
 import team2.chartBox.freeBoard.dto.MovieTalkDto;
 import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.mainHome.dto.MainHomeDto;
@@ -20,6 +23,7 @@ import team2.chartBox.schedul.service.MovieChartService;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,11 +36,19 @@ public class MainHomeController {
     private MainHomeService mainHomeService;
     private FreeBoardService freeBoardService;
     private NPartyBoardService nPartyBoardService;
+    private CurationService curationService;
 
     @GetMapping("/") // 메인 홈
     public ResponseEntity<MainHomeDto> home() throws IOException {
         MainHomeDto mainHomeDto = new MainHomeDto();
         mainHomeDto.setMvCharts(mainHomeService.getMvChartList());
+
+        // 큐레이션 - 개추운날
+        CurationResponse curationData = curationService.getCurationCold();
+        mainHomeDto.setCurationInfo(curationData.getCurationInfo());
+
+        List<CurationDto> curationMovie = curationService.getCurationCategory("개추운날");
+        mainHomeDto.setCurationList(curationMovie.subList(0,3));
 
         List<MovieTalkDto> freeBoardList = freeBoardService.getFreeBoardList();
         if (freeBoardList.size() > 10)

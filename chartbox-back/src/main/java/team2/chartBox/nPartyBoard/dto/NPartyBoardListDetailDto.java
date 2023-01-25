@@ -18,7 +18,7 @@ public class NPartyBoardListDetailDto {
     private int postComment;
     private String postUserNickname;
     private String postAnonym; // 익명 체크
-    private LocalDateTime postDate;
+    private String postDate;
     private int countVisit;
     private int postLike;
 
@@ -32,7 +32,7 @@ public class NPartyBoardListDetailDto {
         this.postComment = nPartyBoard.getPostComment();
         this.postUserNickname = nPartyBoard.getPostUserNickname();
         this.postAnonym = nPartyBoard.getPostAnonym();
-        this.postDate = nPartyBoard.getPostDate();
+        this.postDate = nPartyBoard.getPostDate().toString();
         this.countVisit = nPartyBoard.getCountVisit();
         this.postLike = nPartyBoard.getCountVisit();
     }

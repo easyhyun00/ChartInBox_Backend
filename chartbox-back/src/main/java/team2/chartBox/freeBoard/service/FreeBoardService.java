@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import team2.chartBox.freeBoard.dto.BoardWriteDto;
 import team2.chartBox.freeBoard.dto.CommentDto;
 import team2.chartBox.freeBoard.dto.MovieTalkDto;
+import team2.chartBox.freeBoard.dto.PostDetailDto;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.entity.FreeBoardComment;
 import team2.chartBox.freeBoard.repository.FreeBoardCommentRepository;
 import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,6 +89,19 @@ public class FreeBoardService {
      */
     public FreeBoard getFreeBoardDetail(String postId) {
         return freeBoardRepository.findByPostId(Integer.parseInt(postId));
+    }
+
+    /*
+        글 상세 보기
+        dto
+     */
+    public PostDetailDto getFreeBoardDetail2(String postId) {
+
+        FreeBoard freeboard = freeBoardRepository.findByPostId(Integer.parseInt(postId));
+
+        PostDetailDto postDetailDto = new PostDetailDto(freeboard);
+
+        return postDetailDto;
     }
 
     /*

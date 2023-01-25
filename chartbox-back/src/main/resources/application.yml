@@ -9,9 +9,9 @@ spring:
       mail.smtp.starttls.enable: true
 
 ## cookie, 프론트랑 연결할 때엔 주석 해제
-#server:
-#  servlet:
-#    session:
-#      cookie:
-#        same-site: none
-#        secure: true
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true

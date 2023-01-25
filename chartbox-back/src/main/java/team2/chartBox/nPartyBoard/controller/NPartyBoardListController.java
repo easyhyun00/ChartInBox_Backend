@@ -11,6 +11,7 @@ import team2.chartBox.SessionConst;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.nPartyBoard.dto.NPartyBoardDetailDto;
 import team2.chartBox.nPartyBoard.dto.NPartyBoardListDto;
+import team2.chartBox.nPartyBoard.dto.PostDetailDto;
 import team2.chartBox.nPartyBoard.entity.NPartyBoard;
 import team2.chartBox.nPartyBoard.service.NPartyBoardService;
 
@@ -113,7 +114,9 @@ public class NPartyBoardListController {
 
         NPartyBoardDetailDto nPartyBoardDetailDto = new NPartyBoardDetailDto();
 
-        nPartyBoardDetailDto.setPostDetail(boardDetail); // 게시물
+        PostDetailDto postDetailDto = new PostDetailDto(boardDetail);
+
+        nPartyBoardDetailDto.setPostDetail(postDetailDto); // 게시물
         nPartyBoardDetailDto.setComments(nPartyBoardService.getCommentList(postId)); // 댓글
         nPartyBoardDetailDto.setPostList(nPartyBoardService.getNPartyList()); // 게시물 목록
 
