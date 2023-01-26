@@ -31,8 +31,11 @@ public class BoardWriteController {
         실패 - “non-member’ - 없는 회원(비회원)
      */
     @PostMapping("/movie-talk/write")
-    public boolean MovieTalkWrite(@RequestBody BoardWriteDto boardWriteDto,
+    public ResponseEntity MovieTalkWrite(@RequestBody BoardWriteDto boardWriteDto,
                                   @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+
+        if (member == null)
+            return ResponseEntity.badRequest().body("non-member");
 
         boardWriteDto.setPostUserNickname(member.getUserNickname());
 
@@ -40,7 +43,7 @@ public class BoardWriteController {
         FreeBoard freeBoard = new FreeBoard(boardWriteDto);
         freeBoardRepository.save(freeBoard);
 
-        return true;
+        return ResponseEntity.ok().body("success");
     }
 
     /*

@@ -1,6 +1,9 @@
 package team2.chartBox.freeBoard.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,14 +13,21 @@ import org.springframework.web.bind.annotation.*;
 import team2.chartBox.SessionConst;
 import team2.chartBox.freeBoard.dto.FreeBoardDetailDto;
 import team2.chartBox.freeBoard.dto.FreeBoardDto;
+import team2.chartBox.freeBoard.dto.MovieInfoDto;
 import team2.chartBox.freeBoard.dto.PostDetailDto;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.member.entity.Member;
+import team2.chartBox.movieApi.dto.MvApiDto;
+import team2.chartBox.movieApi.service.FindMvService;
+import team2.chartBox.movieApi.service.MvApiService;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 @RestController
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
@@ -111,7 +121,7 @@ public class FreeBoardController {
      */
     @GetMapping("/movie-talk/{postId}")
     public ResponseEntity<FreeBoardDetailDto> FreeBoardDetailPage(@PathVariable String postId,
-                                                                  @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+                                                                  @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws IOException, ParseException {
         FreeBoard freeBoardDetail = freeBoardService.getFreeBoardDetail(postId);
 
         freeBoardService.PostViewCnt(freeBoardDetail); // 조회수 증가
@@ -127,6 +137,15 @@ public class FreeBoardController {
             freeBoardDetailDto.setUserNickname("");
         } else {
             freeBoardDetailDto.setUserNickname(member.getUserNickname());
+        }
+
+        if (postDetailDto.getMovieId().equals("")) {
+            log.info("영화 데이터 없음");
+        } else {
+            String movieId = postDetailDto.getMovieId();
+            log.info(movieId);
+            MovieInfoDto movieInfo = freeBoardService.findMovieInfo(movieId);
+            freeBoardDetailDto.setMovieInfo(movieInfo);
         }
 
         HttpHeaders headers= new HttpHeaders();

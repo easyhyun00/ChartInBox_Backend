@@ -91,8 +91,13 @@ public class MvApiService {
             String posters = ((String) tmp.get("posters")); // 포스터
             if (posters.equals(""))
                 continue;
-            String poster = posters.substring(posters.lastIndexOf("|")+1);
-            mvListDto.setMvPoster(poster);
+            int idx = posters.indexOf("|");
+            if (idx > 0) {
+                String poster = posters.substring(0, idx);
+                mvListDto.setMvPoster(poster);
+            } else {
+                mvListDto.setMvPoster(posters);
+            }
 
             String id = (String) tmp.get("DOCID");// 아이디
             mvListDto.setMvId(id);
@@ -186,8 +191,16 @@ public class MvApiService {
             String posters = ((String) tmp.get("posters")); // 포스터
             if (posters.equals(""))
                 continue;
-            String poster = posters.substring(posters.lastIndexOf("|")+1);
-            mvListDto.setMvPoster(poster);
+            int idx = posters.indexOf("|");
+            if (idx > 0) {
+                String poster = posters.substring(0, idx);
+                mvListDto.setMvPoster(poster);
+            } else {
+                mvListDto.setMvPoster(posters);
+            }
+
+//            int idx = posters.indexOf("|");
+//            String poster = posters.substring(0, idx);
 
             String id = (String) tmp.get("DOCID");// 아이디
             mvListDto.setMvId(id);
@@ -210,6 +223,8 @@ public class MvApiService {
         영화 상세보기 페이지
      */
     public MvApiDto requestMovieById(String mvId) throws IOException, ParseException {
+
+        log.info("영화 상세 보기 {}",mvId);
 
         MvApiDto mvApiDto = null;
 
@@ -289,7 +304,12 @@ public class MvApiService {
             String prodYear = (String) tmp.get("prodYear");
             String posters = ((String) tmp.get("posters"));
             int idx = posters.indexOf("|");
-            String poster = posters.substring(0, idx);
+            String poster;
+            if (idx > 0) {
+                poster = posters.substring(0, idx);
+            } else {
+                poster = posters;
+            }
 
             mvApiDto = new MvApiDto(originTitle, titleEng, mvTitleOrg, plotText, genre, runtime, rating, nation, prodYear, poster, actor, director);
         }

@@ -10,7 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team2.chartBox.SessionConst;
+import team2.chartBox.freeBoard.dto.BoardWriteDto;
 import team2.chartBox.freeBoard.dto.MovieTalkDto;
+import team2.chartBox.freeBoard.entity.FreeBoard;
+import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.freeBoard.service.FreeBoardService;
 import team2.chartBox.member.entity.Member;
 import team2.chartBox.movieApi.dto.*;
@@ -29,6 +32,7 @@ public class MvApiController {
     @Autowired
     private FindMvService findMvService;
     private FreeBoardService freeBoardService;
+    private FreeBoardRepository freeBoardRepository;
 
     /*
         영화 검색 페이지
@@ -64,6 +68,8 @@ public class MvApiController {
 
         mvDetailDto.setMovieDetail(mvApiDto);
 
+        mvDetailDto.setCurationList(findMvService.curationList());
+
         List<MovieTalkDto> reviewBoardList = freeBoardService.getReviewBoardList();
         if (reviewBoardList.size() > 10)
             reviewBoardList.subList(0,10);
@@ -78,6 +84,24 @@ public class MvApiController {
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         return new ResponseEntity<>(mvDetailDto,headers, HttpStatus.OK);
+    }
+
+    /*
+        영화 상세에서 글쓰기
+     */
+    @PostMapping("movie-info/{mvId}/write")
+    public ResponseEntity movieInfoWrite(@PathVariable String mvId, @RequestBody BoardWriteDto boardWriteDto,
+                                         @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+        if (member == null)
+            return ResponseEntity.badRequest().body("non-member");
+
+        boardWriteDto.setPostUserNickname(member.getUserNickname());
+        boardWriteDto.setMovieId(mvId);
+
+        FreeBoard freeBoard = new FreeBoard(boardWriteDto);
+        freeBoardRepository.save(freeBoard);
+
+        return ResponseEntity.ok().body("success");
     }
 
     /*

@@ -3,22 +3,27 @@ package team2.chartBox.freeBoard.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import team2.chartBox.freeBoard.dto.BoardWriteDto;
-import team2.chartBox.freeBoard.dto.CommentDto;
-import team2.chartBox.freeBoard.dto.MovieTalkDto;
-import team2.chartBox.freeBoard.dto.PostDetailDto;
+import team2.chartBox.freeBoard.dto.*;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.entity.FreeBoardComment;
 import team2.chartBox.freeBoard.repository.FreeBoardCommentRepository;
 import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
+import team2.chartBox.movieApi.dto.MvApiDto;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -387,5 +392,83 @@ public class FreeBoardService {
         }
 
         return "success";
+    }
+
+    /*
+        영화 데이터 불러오기
+     */
+    private final String Mv_api_url =
+            "https://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp?collection=kmdb_new2&detail=Y&ServiceKey=XHK4HN18GQY1JVK85RO1&listCount=30";
+
+    public MovieInfoDto findMovieInfo(String mvId) throws IOException, ParseException {
+
+        log.info("영화 상세 보기 {}",mvId);
+
+        MovieInfoDto movieInfoDto = new MovieInfoDto();
+
+        StringBuilder urlBuilder = new StringBuilder(Mv_api_url);
+
+        String movieId = mvId.substring(0, 1);
+        String movieSeq = mvId.substring(1);
+
+        urlBuilder.append("&" + URLEncoder.encode("movieId","UTF-8") + "=" + URLEncoder.encode(movieId, "UTF-8"))
+                .append("&" + URLEncoder.encode("movieSeq","UTF-8") + "=" + URLEncoder.encode(movieSeq, "UTF-8"));
+
+        URL url = new URL(urlBuilder.toString());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
+
+        System.out.println("Response code: " + conn.getResponseCode());
+
+        BufferedReader rd;
+
+        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+
+        JSONObject result = null;
+
+        result  = (JSONObject) new JSONParser().parse(sb.toString());
+
+        JSONObject data = (JSONObject) ((JSONArray) result.get("Data")).get(0);
+
+        JSONArray array = (JSONArray) data.get("Result");
+
+        JSONObject tmp;
+        for (int i = 0; i < array.size(); i++) {
+            tmp = (JSONObject) array.get(i);
+
+            String title = (String) tmp.get("title");
+            String genre = (String) tmp.get("genre");
+            String runtime = (String) tmp.get("runtime");
+            String rating = (String) tmp.get("rating");
+            String posters = ((String) tmp.get("posters"));
+            int idx = posters.indexOf("|");
+            String poster;
+            if (idx > 0) {
+                poster = posters.substring(0, idx);
+            } else {
+                poster = posters;
+            }
+            movieInfoDto.setMvPoster(poster);
+            movieInfoDto.setMvTitle(title);
+            movieInfoDto.setMvGenre(genre);
+            movieInfoDto.setMvRuntime(runtime);
+            movieInfoDto.setMvRating(rating);
+        }
+
+        rd.close();
+        conn.disconnect();
+
+        return movieInfoDto;
     }
 }

@@ -22,6 +22,7 @@ public class PostDetailDto {
     private String postSpoiler;
     private String postAnonym; // 익명 체크
     private String postReport; // 게사물 신고
+    private String movieId;
 
     public PostDetailDto(FreeBoard freeBoard) {
         this.postId = freeBoard.getPostId();
@@ -37,5 +38,6 @@ public class PostDetailDto {
         this.postSpoiler = freeBoard.getPostSpoiler();
         this.postAnonym = freeBoard.getPostAnonym();
         this.postReport = freeBoard.getPostReport();
+        this.movieId = freeBoard.getMovieId();
     }
 }

@@ -58,11 +58,14 @@ public class FreeBoard {
     @Column(name = "POSTREPORT")
     private String postReport; // 게사물 신고
 
+    @Column(name = "MOVIEID")
+    private String movieId; // 영화 아이디
+
     // 생성자
     public FreeBoard() {
     }
 
-    public FreeBoard(Integer postId, String postTitle, String postContent, LocalDateTime postDate, String postUserNickname, int countVisit, String postCategory, int postLike, String postLikeList, int postComment, String postSpoiler, String postAnonym, String postReport) {
+    public FreeBoard(Integer postId, String postTitle, String postContent, LocalDateTime postDate, String postUserNickname, int countVisit, String postCategory, int postLike, String postLikeList, int postComment, String postSpoiler, String postAnonym, String postReport, String movieId) {
         this.postId = postId;
         this.postTitle = postTitle;
         this.postContent = postContent;
@@ -76,6 +79,7 @@ public class FreeBoard {
         this.postSpoiler = postSpoiler;
         this.postAnonym = postAnonym;
         this.postReport = postReport;
+        this.movieId = movieId;
     }
 
     public FreeBoard(BoardWriteDto boardWriteDto) {
@@ -89,6 +93,7 @@ public class FreeBoard {
         this.postComment = 0;
         this.postSpoiler = boardWriteDto.getPostSpoiler();
         this.postAnonym = boardWriteDto.getPostAnonym();
+        this.movieId = boardWriteDto.getMovieId();
     }
 
 

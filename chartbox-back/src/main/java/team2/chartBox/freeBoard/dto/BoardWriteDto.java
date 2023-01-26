@@ -15,17 +15,19 @@ public class BoardWriteDto {
     private String postCategory;
     private String postSpoiler;
     private String postAnonym;
+    private String movieId;
 
     public BoardWriteDto() {
     }
 
-    public BoardWriteDto(String postTitle, String postContent, String postUserNickname, String postCategory, String postSpoiler, String postAnonym) {
+    public BoardWriteDto(String postTitle, String postContent, String postUserNickname, String postCategory, String postSpoiler, String postAnonym, String movieId) {
         this.postTitle = postTitle;
         this.postContent = postContent;
         this.postUserNickname = postUserNickname;
         this.postCategory = postCategory;
         this.postSpoiler = postSpoiler;
         this.postAnonym = postAnonym;
+        this.movieId = movieId;
     }
 
     public BoardWriteDto(FreeBoard freeBoard) {
@@ -35,5 +37,6 @@ public class BoardWriteDto {
         this.postCategory = freeBoard.getPostCategory();
         this.postSpoiler = freeBoard.getPostSpoiler();
         this.postAnonym = freeBoard.getPostAnonym();
+        this.movieId = freeBoard.getMovieId();
     }
 }

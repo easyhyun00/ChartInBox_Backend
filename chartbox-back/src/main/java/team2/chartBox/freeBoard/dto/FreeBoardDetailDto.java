@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class FreeBoardDetailDto {
     private Object postDetail;
+    private Object movieInfo;
     private Object comments;
     private String userNickname;
     private Object postList;
