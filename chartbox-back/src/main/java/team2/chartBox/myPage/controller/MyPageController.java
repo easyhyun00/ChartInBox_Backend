@@ -9,20 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team2.chartBox.EmailConst;
 import team2.chartBox.SessionConst;
 import team2.chartBox.freeBoard.entity.FreeBoard;
 import team2.chartBox.freeBoard.repository.FreeBoardRepository;
 import team2.chartBox.member.entity.Member;
+import team2.chartBox.member.repository.MemberRepository;
+import team2.chartBox.member.service.MemberService;
 import team2.chartBox.movieApi.dto.MvScrapDto;
 import team2.chartBox.myPage.dto.*;
 import team2.chartBox.myPage.service.MyPageService;
-
+import team2.chartBox.SessionConst;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.List;
 
 @RestController
@@ -33,37 +37,80 @@ public class MyPageController {
 
     @Autowired
     private MyPageService myPageService;
+    private MemberRepository memberRepository;
     private FreeBoardRepository freeBoardRepository;
 
+//    /*
+//        [마이페이지 화면]
+//        우선 닉네임, 이메일, 작성한 게시물
+//        추후에 댓글, 스크랩한 영화
+//     */
+//    @GetMapping("/my-page")
+//    public ResponseEntity<MyPageResponse> myPage(@SessionAttribute(name = "JSESSIONID", required = false) Member member) throws ParseException, IOException {
+//        MyPageResponse myPageResponse = new MyPageResponse();
+//
+//        myPageResponse.setUserEmail(member.getUserEmail());
+//        myPageResponse.setUserNickname(member.getUserNickname());
+//
+//        // 글 목록
+//        List<MyBoardListDto> boardList = myPageService.getBoardList(member.getUserNickname());
+//        if (boardList.size()>10) {
+//            boardList.subList(0,10);
+//        }
+//        myPageResponse.setBoardList(boardList);
+//
+//        // 댓글 목록
+//        List<MyCommentListDto> commentList = myPageService.getCommentList(member.getUserNickname());
+//        if (commentList.size()>10)
+//            commentList.subList(0,10);
+//        myPageResponse.setCommentList(commentList);
+//
+//        // 스크랩 목록
+//        List<MvScrapDto> scrapMovieList = myPageService.getScrapMovieList(member.getUserNickname()); // 영화 스크랩 목록
+//        if (scrapMovieList.size() > 10) {
+//            scrapMovieList.subList(0,10);
+//        }
+//        myPageResponse.setScrapList(scrapMovieList);
+//
+//        HttpHeaders headers= new HttpHeaders();
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        return new ResponseEntity<>(myPageResponse,headers, HttpStatus.OK);
+//    }
+
     /*
-        [마이페이지 화면]
-        우선 닉네임, 이메일, 작성한 게시물
-        추후에 댓글, 스크랩한 영화
-     */
+    [마이페이지 화면]222
+    우선 닉네임, 이메일, 작성한 게시물
+    추후에 댓글, 스크랩한 영화
+ */
     @GetMapping("/my-page")
-    public ResponseEntity<MyPageResponse> myPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+    public ResponseEntity<MyPageResponse> myPage() throws ParseException, IOException {
         MyPageResponse myPageResponse = new MyPageResponse();
+
+        Member member = memberRepository.findByUserEmail(EmailConst.MEMBER_EMAIL);
+        log.info(EmailConst.MEMBER_EMAIL);
+        log.info(member.getUserNickname());
 
         myPageResponse.setUserEmail(member.getUserEmail());
         myPageResponse.setUserNickname(member.getUserNickname());
 
         // 글 목록
         List<MyBoardListDto> boardList = myPageService.getBoardList(member.getUserNickname());
-        if (boardList.size()>10) {
-            boardList.subList(0,10);
+        if (boardList.size()>3) {
+            boardList = boardList.subList(0,3);
         }
         myPageResponse.setBoardList(boardList);
 
         // 댓글 목록
         List<MyCommentListDto> commentList = myPageService.getCommentList(member.getUserNickname());
-        if (commentList.size()>10)
-            commentList.subList(0,10);
+        if (commentList.size()>3)
+            commentList = commentList.subList(0,3);
         myPageResponse.setCommentList(commentList);
 
         // 스크랩 목록
         List<MvScrapDto> scrapMovieList = myPageService.getScrapMovieList(member.getUserNickname()); // 영화 스크랩 목록
-        if (scrapMovieList.size() > 10) {
-            scrapMovieList.subList(0,10);
+        if (scrapMovieList.size() > 4) {
+            scrapMovieList = scrapMovieList.subList(0,4);
         }
         myPageResponse.setScrapList(scrapMovieList);
 
@@ -73,12 +120,26 @@ public class MyPageController {
         return new ResponseEntity<>(myPageResponse,headers, HttpStatus.OK);
     }
 
+//    /*
+//        [정보 수정 화면]
+//        세션을 통해 닉네임 전송
+//     */
+//    @GetMapping("/my-page/edit")
+//    public ResponseEntity myPageEdit(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+//        log.info("이메일 = {}" , member.getUserEmail());
+//
+//        return ResponseEntity.ok().body(member.getUserEmail());
+//    }
+
     /*
-        [정보 수정 화면]
-        세션을 통해 닉네임 전송
-     */
+    [정보 수정 화면]2
+    세션을 통해 닉네임 전송
+ */
     @GetMapping("/my-page/edit")
-    public ResponseEntity myPageEdit(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+    public ResponseEntity myPageEdit() {
+
+        Member member = memberRepository.findByUserEmail(EmailConst.MEMBER_EMAIL);
+
         log.info("이메일 = {}" , member.getUserEmail());
 
         return ResponseEntity.ok().body(member.getUserEmail());
@@ -131,27 +192,54 @@ public class MyPageController {
         return ResponseEntity.badRequest().body(false);
     }
 
+//    /*
+//        [내가 쓴 글 상세 보기]
+//     */
+//    @GetMapping("/my-page/post")
+//    public List<MyBoardListDto> myPageMyFreeBoard(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+//        return myPageService.getBoardList(member.getUserNickname());
+//    }
+
     /*
-        [내가 쓴 글 상세 보기]
-     */
+    [내가 쓴 글 상세 보기]2
+ */
     @GetMapping("/my-page/post")
-    public List<MyBoardListDto> myPageMyFreeBoard(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+    public List<MyBoardListDto> myPageMyFreeBoard() throws ParseException, IOException {
+        Member member = memberRepository.findByUserEmail(EmailConst.MEMBER_EMAIL);
         return myPageService.getBoardList(member.getUserNickname());
     }
 
+//    /*
+//        [내가 쓴 댓글 상세 보기]
+//     */
+//    @GetMapping("/my-page/comment")
+//    public List<MyCommentListDto> myPageMyComment(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+//        return myPageService.getCommentList(member.getUserNickname());
+//    }
+
     /*
-        [내가 쓴 댓글 상세 보기]
-     */
+    [내가 쓴 댓글 상세 보기]
+    */
     @GetMapping("/my-page/comment")
-    public List<MyCommentListDto> myPageMyComment(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+    public List<MyCommentListDto> myPageMyComment() {
+        Member member = memberRepository.findByUserEmail(EmailConst.MEMBER_EMAIL);
         return myPageService.getCommentList(member.getUserNickname());
     }
 
+//    /*
+//        [내가 스크랩한 영화 페이지]
+//     */
+//    @GetMapping("/my-page/scrap")
+//    public List<MvScrapDto> myPageMovieScrap(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+//        return myPageService.getScrapMovieList(member.getUserNickname());
+//    }
+
     /*
-        [내가 스크랩한 영화 페이지]
-     */
+    [내가 스크랩한 영화 페이지]
+ */
     @GetMapping("/my-page/scrap")
-    public List<MvScrapDto> myPageMovieScrap(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) throws ParseException, IOException {
+    public List<MvScrapDto> myPageMovieScrap() throws ParseException, IOException {
+        Member member = memberRepository.findByUserEmail(EmailConst.MEMBER_EMAIL);
         return myPageService.getScrapMovieList(member.getUserNickname());
     }
 

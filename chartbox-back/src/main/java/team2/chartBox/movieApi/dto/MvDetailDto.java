@@ -8,6 +8,7 @@ import lombok.Setter;
 public class MvDetailDto {
     private Object movieDetail;
     private Boolean movieScrap;
+    private Object curationList;
     private Object reviewBoardList;
     private Object qnaBoardList;
 

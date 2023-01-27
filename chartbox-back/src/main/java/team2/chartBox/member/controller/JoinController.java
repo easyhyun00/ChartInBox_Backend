@@ -36,13 +36,17 @@ public class JoinController {
 
         if (strMsg.equals("success")) { // 회원가입 성공
             log.info("회원 가입 성공 {}",joinResponse.getUserEmail());
-            memberService.sendAuthMail(joinResponse.getUserEmail()); // 인증 메일 발송
             return ResponseEntity.ok().body(strMsg);
         }
         else{ // 회원가입 실패
             log.info("회원 가입 실패 중복된 {}", strMsg);
             return ResponseEntity.badRequest().body(strMsg);
         }
+    }
+
+    @PostMapping("/join/mail")
+    public void joinMail(@RequestBody JoinResponse joinResponse) throws MessagingException, UnsupportedEncodingException {
+        memberService.sendAuthMail(joinResponse.getUserEmail()); // 인증 메일 발송
     }
 
     /*

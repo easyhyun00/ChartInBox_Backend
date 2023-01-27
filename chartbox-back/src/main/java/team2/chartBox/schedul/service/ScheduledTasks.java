@@ -20,7 +20,7 @@ public class ScheduledTasks {
     /*
         영화 예매 순위
     */
-    @Scheduled(cron = "0 0 8 * * *") // 매일 8시 00분 업데이트
+    @Scheduled(cron = "0 34 13 * * *") // 매일 8시 00분 업데이트
     public void movieBookingChartTasks() throws IOException {
         movieChartService.movieBookingChart();
         log.info("예매차트 업데이트");

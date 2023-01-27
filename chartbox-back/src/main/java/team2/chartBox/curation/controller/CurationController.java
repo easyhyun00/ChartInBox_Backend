@@ -22,18 +22,6 @@ public class CurationController {
     @Autowired
     public CurationService curationService;
 
-//    @GetMapping("/curation/snow")
-//    public ResponseEntity curationSnow() {
-//        List<CurationDto> list = curationService.getCurationCategory("눈오는날");
-//        return ResponseEntity.ok().body(list);
-//    }
-
-//    @GetMapping("/curation/rain")
-//    public ResponseEntity curationRain() {
-//        List<CurationDto> list = curationService.getCurationCategory("비오는날");
-//        return ResponseEntity.ok().body(list);
-//    }
-
     @GetMapping("/curation/cold")
     public ResponseEntity curationCold() {
         CurationResponse curationResponse = new CurationResponse();
@@ -58,6 +46,33 @@ public class CurationController {
         CurationInfo curationPick1 = curationService.getCurationPick1();
         curationResponse.setCurationInfo(curationPick1);
         curationResponse.setCurationMovie(curationService.getCurationCategory(curationPick1.getCurationCategory()));
+        return ResponseEntity.ok().body(curationResponse);
+    }
+
+    @GetMapping("/curation/pick2")
+    public ResponseEntity curationPick2() {
+        CurationResponse curationResponse = new CurationResponse();
+        CurationInfo curationPick2 = curationService.getCurationPick2();
+        curationResponse.setCurationInfo(curationPick2);
+        curationResponse.setCurationMovie(curationService.getCurationCategory(curationPick2.getCurationCategory()));
+        return ResponseEntity.ok().body(curationResponse);
+    }
+
+    @GetMapping("/curation/pick3")
+    public ResponseEntity curationPick3() {
+        CurationResponse curationResponse = new CurationResponse();
+        CurationInfo curationPick3 = curationService.getCurationPick3();
+        curationResponse.setCurationInfo(curationPick3);
+        curationResponse.setCurationMovie(curationService.getCurationCategory(curationPick3.getCurationCategory()));
+        return ResponseEntity.ok().body(curationResponse);
+    }
+
+    @GetMapping("/curation/sad")
+    public ResponseEntity curationSad() {
+        CurationResponse curationResponse = new CurationResponse();
+        CurationInfo curationSad = curationService.getCurationSad();
+        curationResponse.setCurationInfo(curationSad);
+        curationResponse.setCurationMovie(curationService.getCurationCategory(curationSad.getCurationCategory()));
         return ResponseEntity.ok().body(curationResponse);
     }
 }

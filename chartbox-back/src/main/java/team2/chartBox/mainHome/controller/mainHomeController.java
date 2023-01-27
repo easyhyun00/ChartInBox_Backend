@@ -24,6 +24,8 @@ import team2.chartBox.schedul.service.MovieChartService;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,9 @@ public class MainHomeController {
 
     @GetMapping("/") // 메인 홈
     public ResponseEntity<MainHomeDto> home() throws IOException {
+
+        log.info(LocalTime.now().toString());
+
         MainHomeDto mainHomeDto = new MainHomeDto();
         mainHomeDto.setMvCharts(mainHomeService.getMvChartList());
 
@@ -52,18 +57,19 @@ public class MainHomeController {
         mainHomeDto.setCurationList(curationMovie.subList(0,3));
 
         List<MovieTalkDto> freeBoardList = freeBoardService.getFreeBoardList();
-        if (freeBoardList.size() > 10)
-            freeBoardList.subList(0,10);
+        if (freeBoardList.size() > 9)
+            freeBoardList = freeBoardList.subList(0,9);
         mainHomeDto.setFreeBoardList(freeBoardList);
 
         List<MovieTalkDto> reviewBoardList = freeBoardService.getReviewBoardList();
-        if (reviewBoardList.size() > 10)
-            reviewBoardList.subList(0,10);
+        log.info(String.valueOf(reviewBoardList.size()));
+        if (reviewBoardList.size() > 9)
+            reviewBoardList = reviewBoardList.subList(0,9);
         mainHomeDto.setReviewBoardList(reviewBoardList);
 
         List<NPartyBoardListDetailDto> nPartyBoardList = nPartyBoardService.getNPartyList();
-        if (nPartyBoardList.size() > 10)
-            nPartyBoardList.subList(0,10);
+        if (nPartyBoardList.size() > 9)
+            nPartyBoardList = nPartyBoardList.subList(0,9);
         mainHomeDto.setNPartyBoardList(nPartyBoardList);
 
         HttpHeaders headers= new HttpHeaders();

@@ -57,11 +57,10 @@ public class FindMvService {
 
         CurationInfo curationCold = curationService.getCurationCold();
         List<CurationDto> curationCategory1 = curationService.getCurationCategory(curationCold.getCurationCategory());
-        String moviePoster1 = curationCategory1.get(0).getMoviePoster();
 
         mvCurationDto1.setCurationTitle(curationCold.getCurationTitle());
         mvCurationDto1.setCurationUrl(curationCold.getCurationLink());
-        mvCurationDto1.setCurationPoster(moviePoster1);
+        mvCurationDto1.setCurationPoster(curationCold.getCurationPoster());
 
         list.add(mvCurationDto1);
 
@@ -69,11 +68,10 @@ public class FindMvService {
 
         CurationInfo curationHomeDate = curationService.getCurationHomeDate();
         List<CurationDto> curationCategory2 = curationService.getCurationCategory(curationHomeDate.getCurationCategory());
-        String moviePoster2 = curationCategory2.get(0).getMoviePoster();
 
         mvCurationDto2.setCurationTitle(curationHomeDate.getCurationTitle());
         mvCurationDto2.setCurationUrl(curationHomeDate.getCurationLink());
-        mvCurationDto2.setCurationPoster(moviePoster2);
+        mvCurationDto2.setCurationPoster(curationHomeDate.getCurationPoster());
 
         list.add(mvCurationDto2);
 
@@ -81,13 +79,45 @@ public class FindMvService {
 
         CurationInfo curationPick1 = curationService.getCurationPick1();
         List<CurationDto> curationCategory3 = curationService.getCurationCategory(curationPick1.getCurationCategory());
-        String moviePoster3 = curationCategory3.get(0).getMoviePoster();
 
         mvCurationDto3.setCurationTitle(curationPick1.getCurationTitle());
         mvCurationDto3.setCurationUrl(curationPick1.getCurationLink());
-        mvCurationDto3.setCurationPoster(moviePoster3);
+        mvCurationDto3.setCurationPoster(curationPick1.getCurationPoster());
 
         list.add(mvCurationDto3);
+
+        MvCurationDto mvCurationDto4 = new MvCurationDto(); // 큐레이션4
+
+        CurationInfo curationPick3 = curationService.getCurationPick3();
+        List<CurationDto> curationCategory4 = curationService.getCurationCategory(curationPick3.getCurationCategory());
+
+        mvCurationDto4.setCurationTitle(curationPick3.getCurationTitle());
+        mvCurationDto4.setCurationUrl(curationPick3.getCurationLink());
+        mvCurationDto4.setCurationPoster(curationPick3.getCurationPoster());
+
+        list.add(mvCurationDto4);
+
+        MvCurationDto mvCurationDto5 = new MvCurationDto(); // 큐레이션5
+
+        CurationInfo curationPick2 = curationService.getCurationPick2();
+        List<CurationDto> curationCategory5 = curationService.getCurationCategory(curationPick2.getCurationCategory());
+
+        mvCurationDto5.setCurationTitle(curationPick2.getCurationTitle());
+        mvCurationDto5.setCurationUrl(curationPick2.getCurationLink());
+        mvCurationDto5.setCurationPoster(curationPick2.getCurationPoster());
+
+        list.add(mvCurationDto5);
+
+        MvCurationDto mvCurationDto6 = new MvCurationDto(); // 큐레이션6
+
+        CurationInfo curationSad = curationService.getCurationSad();
+        List<CurationDto> curationCategory6 = curationService.getCurationCategory(curationSad.getCurationCategory());
+
+        mvCurationDto6.setCurationTitle(curationSad.getCurationTitle());
+        mvCurationDto6.setCurationUrl(curationSad.getCurationLink());
+        mvCurationDto6.setCurationPoster(curationSad.getCurationPoster());
+
+        list.add(mvCurationDto6);
 
         return list;
     }

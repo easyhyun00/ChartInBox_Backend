@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter @Setter
 public class CurationInfo {
     private String curationLink;
+    private String curationPoster;
     private String curationTitle;
     private String curationText;
     private String curationCategory;

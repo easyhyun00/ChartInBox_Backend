@@ -13,7 +13,9 @@ import team2.chartBox.member.repository.MemberRepository;
 import team2.chartBox.member.service.MemberService;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -34,7 +36,7 @@ public class LoginController {
         로그인
      */
     @PostMapping("/log-in")
-    public ResponseEntity loginSubmit(@RequestBody LoginResponse loginResponse, HttpServletRequest request) {
+    public ResponseEntity loginSubmit(@RequestBody LoginResponse loginResponse, HttpServletRequest request, HttpServletResponse response) {
 
         log.info("받은 거 {}",loginResponse);
         log.info("===========> {} ",loginResponse.getUserEmail());
@@ -55,16 +57,18 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER,findMember);
 
-         HttpHeaders headers= new HttpHeaders();
-         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-         // headers.set("mySession",session.getId());
-        // headers.setCacheControl("max-age=3600, must-revalidate, no-transform");
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        // CacheControl cacheControl = CacheControl.maxAge(Duration.ofDays(1));
+        // 세션 테스트
+        Cookie cookie = new Cookie("CookiesName", "TEST");
+        cookie.setPath("/");
+        cookie.setDomain("localhost");
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(60*60*24*7);
+        response.addCookie(cookie);
 
-//        return ResponseEntity.ok()
-//                .cacheControl(cacheControl)
-//                .body("success");
         return new ResponseEntity(findMember.getUserNickname(),headers, HttpStatus.OK);
     }
 

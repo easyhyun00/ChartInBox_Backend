@@ -9,9 +9,6 @@ import java.util.List;
 public class CurationResponse {
     private Object curationMovie;
     private Object curationInfo;
-//    private String curationLink;
-//    private String curationTitle;
-//    private String curationText;
 
     public CurationResponse() {
     }

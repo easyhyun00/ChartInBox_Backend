@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team2.chartBox.EmailConst;
 import team2.chartBox.SessionConst;
 import team2.chartBox.member.entity.Member;
+import team2.chartBox.member.repository.MemberRepository;
 import team2.chartBox.nPartyBoard.dto.NPartyBoardDetailDto;
 import team2.chartBox.nPartyBoard.dto.NPartyBoardListDto;
 import team2.chartBox.nPartyBoard.dto.PostDetailDto;
@@ -24,17 +26,43 @@ public class NPartyBoardListController {
 
     @Autowired
     private NPartyBoardService nPartyBoardService;
+    private MemberRepository memberRepository;
+
+//    /*
+//        N팟 구함 - 전체 글 목록
+//     */
+//    @GetMapping("/n-party")
+//    public ResponseEntity<NPartyBoardListDto> NPartyTotalPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+//
+//        NPartyBoardListDto nPartyBoardListDto = new NPartyBoardListDto();
+//        nPartyBoardListDto.setBoardList(nPartyBoardService.getNPartyList());
+//
+//        return getResponseEntity(member, nPartyBoardListDto);
+//    }
 
     /*
-        N팟 구함 - 전체 글 목록
-     */
+    N팟 구함 - 전체 글 목록 2
+ */
     @GetMapping("/n-party")
-    public ResponseEntity<NPartyBoardListDto> NPartyTotalPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member) {
+    public ResponseEntity<NPartyBoardListDto> NPartyTotalPage() {
+
+        // Member member = memberRepository.findByUserEmail("leejihyun0324@gmail.com");
 
         NPartyBoardListDto nPartyBoardListDto = new NPartyBoardListDto();
         nPartyBoardListDto.setBoardList(nPartyBoardService.getNPartyList());
 
-        return getResponseEntity(member, nPartyBoardListDto);
+//        if (member == null) {
+//            nPartyBoardListDto.setUserNickname("");
+//        } else {
+//            nPartyBoardListDto.setUserNickname(member.getUserNickname());
+//        }
+
+        nPartyBoardListDto.setUserNickname("잇타2피구현영상");
+
+        HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        return new ResponseEntity<>(nPartyBoardListDto, headers, HttpStatus.OK);
     }
 
     /*
