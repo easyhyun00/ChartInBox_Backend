@@ -30,3 +30,6 @@
 - ### Collaboration Tools
 <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"/> 
 
+## 📹 시연 영상
+
+https://youtu.be/d_1_hRIR6ng
